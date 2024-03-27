@@ -114,3 +114,21 @@
 ### 27/03/2024
 
 - can only use postgre default database and credentials in docker, don't know how to customize it yet
+- run into connection error in prisma studio, can't figure out the reason, but the database works fine with the backend api in the container, perhaps it's just the prisma client settings to connect to database in docker is not correct so it can't connect to the right database
+  - figure out that the database_url in .env is for prisma studio connecting to localhost, and the database_url in docker compose.yaml is for prisma in the docker; when docker is running, it blocks the localhost connection other than docker itself. But it should work if I run database in docker first and then connect the prisma studio with the database server in docker, will further test this when I have time.
+- When set up base url for axios to connect with content server which is running in localhost:4000, find out "NEXT_PUBLIC" leading environment variable is accessable globally, tried to name it "CONTENT_PUBLIC_HOST" and failed
+- CORS issue when send request from frontend to node.js(express) backend, try using cors package, solved
+  `npm install cors`
+- Find out I have two RootLayout when debug multi body tags rendered, modify the one inside auth
+- Modify authentication api to return userId for verification
+- Save userId in localStorage until logout
+- Retrieve and Pass userId in request body to create course, in order to check if the user is authorized or not
+  - decided not to distinguish the user a teacher or not at this point, every user can create course because everyone is an expert on something, but this will be more like a YouTube
+- Successfully build an simple create course API with Express and handle the create course request from frontend
+- Build fetch course data api and page, stuck for 2h because of a small mistake in the endpoint
+- useRouter will direct user to a page but doesn't stop the rest of codes running, need to add a `return;` maybe related to the double verify issue
+- get hands on uploadthing for course videos storage
+
+### 28/03/2024
+
+- route.refresh() not working

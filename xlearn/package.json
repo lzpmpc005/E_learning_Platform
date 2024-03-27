@@ -18,6 +18,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@reduxjs/toolkit": "^2.2.2",
     "@tailwindcss/forms": "^0.5.7",
+    "@uploadthing/react": "^6.4.1",
     "async-mutex": "^0.5.0",
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
@@ -33,6 +34,7 @@
     "react-toastify": "^10.0.5",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
+    "uploadthing": "^6.7.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {

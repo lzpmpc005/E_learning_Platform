@@ -42,7 +42,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+pyenv/Lib/
 lib64/
 parts/
 sdist/

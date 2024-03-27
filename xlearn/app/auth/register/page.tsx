@@ -3,7 +3,7 @@ import { RegisterForm } from "@/components/forms";
 import { SocialButtons } from "@/components/common";
 import type { Metadata } from "next";
 
-export const medadata: Metadata = {
+export const metadata: Metadata = {
   title: "collegeX | Register",
   description: "Register to be studentX & teacherX",
 };

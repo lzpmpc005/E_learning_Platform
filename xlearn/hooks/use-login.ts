@@ -26,7 +26,8 @@ export default function useLogin() {
     event.preventDefault();
     login({ email, password })
       .unwrap()
-      .then((user) => {
+      .then((data) => {
+        localStorage.setItem("userId", data.userId);
         dispatch(setAuth());
         toast.success("Welcome to collegeX!");
         router.push("/");

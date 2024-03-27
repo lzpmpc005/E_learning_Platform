@@ -1,7 +1,7 @@
 "use client";
 
 import * as z from "zod";
-import axios from "axios";
+import axios from "@/utils/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -38,8 +38,10 @@ const CreatePage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const response = await axios.post("/api/courses", values);
+      const userId = localStorage.getItem("userId");
+      const response = await axios.post("/courses", { ...values, userId });
       router.push(`/teacher/courses/${response.data.id}`);
+      toast.success("Course created successfully");
     } catch {
       toast.error("something went wrong");
     }

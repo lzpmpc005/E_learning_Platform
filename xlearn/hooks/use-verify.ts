@@ -13,6 +13,9 @@ export default function useVerify() {
       .then(() => {
         dispatch(setAuth());
       })
+      .catch(() => {
+        localStorage.removeItem("userId");
+      })
       .finally(() => {
         dispatch(finishInitialLoad());
       });

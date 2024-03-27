@@ -8,6 +8,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView
     )
+from rest_framework_simplejwt.tokens import AccessToken
 
 
 class CustomProviderAuthView(ProviderAuthView):
@@ -35,6 +36,8 @@ class CustomProviderAuthView(ProviderAuthView):
                 httponly=settings.AUTH_COOKIE_HTTP_ONLY,
                 samesite=settings.AUTH_COOKIE_SAMESITE
             )
+            data = AccessToken(access_token).payload
+            response.data['userId'] = data['user_id']
         return response
 
 
@@ -63,6 +66,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 httponly=settings.AUTH_COOKIE_HTTP_ONLY,
                 samesite=settings.AUTH_COOKIE_SAMESITE
             )
+            data = AccessToken(access_token).payload
+            response.data['userId'] = data['user_id']
         return response
     
 
@@ -95,8 +100,10 @@ class CustomTokenVerifyView(TokenVerifyView):
         access_token = request.COOKIES.get('access')
         if access_token:
             request.data['token'] = access_token
-
-        return super().post(request, *args, **kwargs)
+        response = super().post(request, *args, **kwargs)
+        data = AccessToken(access_token).payload
+        response.data['userId'] = data['user_id']
+        return response
 
 
 class LogoutView(APIView):
