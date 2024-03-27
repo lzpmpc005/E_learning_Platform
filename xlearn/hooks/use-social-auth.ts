@@ -21,7 +21,7 @@ export default function useSocialAuth(authenticate: any, provider: string) {
         .then(() => {
           dispatch(setAuth());
           toast.success("Logged in successfully");
-          router.push("/dashboard");
+          router.push("/");
         })
         .catch(() => {
           toast.error("Failed to login");

@@ -1,5 +1,13 @@
 import Image from "next/image";
 
 export const Logo = () => {
-  return <Image height={130} width={130} src="/logo.jpg" alt="logo" />;
+  return (
+    <Image
+      style={{ marginLeft: "36px" }}
+      height={100}
+      width={100}
+      src="/logo.jpg"
+      alt="logo"
+    />
+  );
 };

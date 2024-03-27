@@ -103,3 +103,14 @@
 ### 26/03/2024
 
 - continue with frontend
+- work on sidebar and navbar, modify to adapt different devices
+  - ⨯ Error: The default export is not a React Component in page: "/"
+    - Reason: forgot to export default component when create a new Layout
+  - tried to create a login button and will turn into a drop down menu after login. After two hours, Failed to change the login button to username because my previous authentication settings, will try again in the future
+  - created sidebar for teacher mode(Courses and Analytics) and explore mode(Dashboard and Explore)
+  - created Courses create form
+  - research on backend server for content management, decide to use express.js framework and prisma package to interact with database which will run in docker, for analytics server, it will be C++ or Django also
+
+### 27/03/2024
+
+- can only use postgre default database and credentials in docker, don't know how to customize it yet

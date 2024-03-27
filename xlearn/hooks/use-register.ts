@@ -29,20 +29,8 @@ export default function useRegister() {
         toast.success("Please check email to verify your account!");
         router.push("/auth/login");
       })
-      .catch((error) => {
-        if (typeof error.data === "object" && error.data !== null) {
-          for (const key in error.data) {
-            if (Array.isArray(error.data[key])) {
-              error.data[key].forEach((errorMessage: string) => {
-                toast.error(errorMessage);
-              });
-            } else {
-              toast.error(error.data[key]);
-            }
-          }
-        } else {
-          toast.error(error.message || "Something went wrong!");
-        }
+      .catch(() => {
+        toast.error("Failed to register!");
       });
   };
 
