@@ -1,54 +1,29 @@
-"use client";
-
 import * as z from "zod";
 import axios from "@/utils/axios";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Pencil } from "lucide-react";
+import { Pencil, PlusCircle, ImageIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
-import { Textarea } from "@/components/ui/textarea";
-
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import { FileUpload } from "@/components/common/file-upload";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
-interface DescriptionFormProps {
+interface ImageFormProps {
   initialData: {
-    description: string;
+    imageUrl: string;
   };
   courseId: string;
 }
 
 const formSchema = z.object({
-  description: z.string().min(1, {
-    message: "Description is required",
+  imageUrl: z.string().min(1, {
+    message: "Image is required",
   }),
 });
 
-export const DescriptionForm = ({
-  initialData,
-  courseId,
-}: DescriptionFormProps) => {
+export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleEdit = () => setIsEditing((current) => !current);
-
-  const router = useRouter();
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: initialData,
-  });
-
-  const { isSubmitting, isValid } = form.formState;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -56,7 +31,7 @@ export const DescriptionForm = ({
       await axios.patch(`/courses/${courseId}`, { ...values, userId });
       toast.success("Course updated");
       toggleEdit();
-      router.refresh();
+      location.reload();
     } catch {
       toast.error("Something went wrong");
     }
@@ -65,57 +40,53 @@ export const DescriptionForm = ({
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course description
+        Course image
         <Button onClick={toggleEdit} variant="ghost">
-          {isEditing ? (
-            <>Cancel</>
-          ) : (
+          {isEditing && <>Cancel</>}
+          {!isEditing && !initialData.imageUrl && (
+            <>
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Upload course image
+            </>
+          )}
+          {!isEditing && initialData.imageUrl && (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit description
+              Update course image
             </>
           )}
         </Button>
       </div>
-      {!isEditing && (
-        <p
-          className={cn(
-            "text-sm mt-2",
-            !initialData.description && "text-slate-500 italic"
-          )}
-        >
-          {initialData.description || "No description"}
-        </p>
-      )}
-      {isEditing && (
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 mt-4"
-          >
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Textarea
-                      disabled={isSubmitting}
-                      placeholder="e.g. 'This course is about...'"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+      {!isEditing &&
+        (!initialData.imageUrl ? (
+          <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
+            <ImageIcon className="h-10 w-10 text-slate-500" />
+          </div>
+        ) : (
+          <div className="relative aspect-video mt-2">
+            <Image
+              alt="Upload"
+              fill
+              className="object-cover rounded-md"
+              src={initialData.imageUrl}
+              sizes="(max-width: 600px) 100vw, 600px"
             />
-            <div className="flex items-center gap-x-2">
-              <Button disabled={!isValid || isSubmitting} type="submit">
-                Save
-              </Button>
-            </div>
-          </form>
-        </Form>
+          </div>
+        ))}
+      {isEditing && (
+        <div>
+          <FileUpload
+            endpoint="courseImage"
+            onChange={(url) => {
+              if (url) {
+                onSubmit({ imageUrl: url });
+              }
+            }}
+          />
+          <div className="text-xs text-muted-foreground mt-4">
+            16:9 aspect ratio recommended
+          </div>
+        </div>
       )}
     </div>
   );

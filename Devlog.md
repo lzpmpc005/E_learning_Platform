@@ -132,3 +132,9 @@
 ### 28/03/2024
 
 - route.refresh() not working
+  - fixed by using location.reload(), but the refresh is not very smooth
+- implement course image uploading and updating
+- create a node script for creating categories
+  `node scripts/createCategories.ts`
+  - had to provide the absolute api endpoint in the script, be sure to change it if server host changes
+- got a type error when render categories out for choosing, fix tomorrow

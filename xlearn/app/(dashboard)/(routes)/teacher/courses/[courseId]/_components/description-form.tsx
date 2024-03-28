@@ -1,5 +1,3 @@
-// "use client";
-
 import * as z from "zod";
 import axios from "@/utils/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 
 import {
@@ -41,8 +38,6 @@ export const DescriptionForm = ({
 
   const toggleEdit = () => setIsEditing((current) => !current);
 
-  const router = useRouter();
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData,
@@ -56,7 +51,7 @@ export const DescriptionForm = ({
       await axios.patch(`/courses/${courseId}`, { ...values, userId });
       toast.success("Course updated");
       toggleEdit();
-      router.refresh();
+      location.reload();
     } catch {
       toast.error("Something went wrong");
     }

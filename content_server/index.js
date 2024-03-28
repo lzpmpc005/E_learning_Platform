@@ -18,10 +18,28 @@ app.use((req, res, next) => {
   next();
 });
 
+app.post("/api/create-categories", async (req, res) => {
+  try {
+    const { name } = req.body;
+    if (!name) {
+      return res.status(400).json({ error: "Name is required" });
+    }
+    const category = await prisma.category.create({
+      data: {
+        name,
+      },
+    });
+    return res.json(category);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
 app.patch("/api/courses/:courseId", async (req, res) => {
   try {
     const { courseId } = req.params;
-    const { title, description, userId } = req.body;
+    const { title, description, imageUrl, userId } = req.body;
 
     let updateData = {};
     if (title !== undefined) {
@@ -29,6 +47,9 @@ app.patch("/api/courses/:courseId", async (req, res) => {
     }
     if (description !== undefined) {
       updateData.description = description;
+    }
+    if (imageUrl !== undefined) {
+      updateData.imageUrl = imageUrl;
     }
 
     const course = await prisma.course.update({

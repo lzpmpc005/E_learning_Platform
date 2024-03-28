@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 
 import {
   Form,
@@ -37,8 +36,6 @@ export const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
 
   const toggleEdit = () => setIsEditing((current) => !current);
 
-  const router = useRouter();
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData,
@@ -52,7 +49,7 @@ export const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
       await axios.patch(`/courses/${courseId}`, { ...values, userId });
       toast.success("Course updated");
       toggleEdit();
-      router.refresh();
+      location.reload();
     } catch {
       toast.error("Something went wrong");
     }

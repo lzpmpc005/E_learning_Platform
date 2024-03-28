@@ -1,14 +1,12 @@
-"use client";
-
 import * as z from "zod";
-import axios from "axios";
+import axios from "@/utils/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { Course } from "@prisma/client";
+import { toast } from "react-toastify";
+import { Textarea } from "@/components/ui/textarea";
+import { Combobox } from "@/components/ui/combobox";
 
 import {
   Form,
@@ -19,13 +17,16 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
-import { Combobox } from "@/components/ui/combobox";
 
 interface CategoryFormProps {
-  initialData: Course;
+  initialData: {
+    categoryId: string;
+  };
   courseId: string;
-  options: { label: string; value: string }[];
+  options: {
+    label: string;
+    value: string;
+  }[];
 }
 
 const formSchema = z.object({
@@ -41,8 +42,6 @@ export const CategoryForm = ({
 
   const toggleEdit = () => setIsEditing((current) => !current);
 
-  const router = useRouter();
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,10 +53,11 @@ export const CategoryForm = ({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await axios.patch(`/api/courses/${courseId}`, values);
+      const userId = localStorage.getItem("userId");
+      await axios.patch(`/courses/${courseId}`, { ...values, userId });
       toast.success("Course updated");
       toggleEdit();
-      router.refresh();
+      location.reload();
     } catch {
       toast.error("Something went wrong");
     }
@@ -77,7 +77,7 @@ export const CategoryForm = ({
           ) : (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit category
+              Choose category
             </>
           )}
         </Button>
@@ -89,7 +89,7 @@ export const CategoryForm = ({
             !initialData.categoryId && "text-slate-500 italic"
           )}
         >
-          {selectedOption?.label || "No category"}
+          {selectedOption?.label || "Category unspecified"}
         </p>
       )}
       {isEditing && (
@@ -104,7 +104,7 @@ export const CategoryForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Combobox options={...options} {...field} />
+                    <Combobox options={options} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

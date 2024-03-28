@@ -13,8 +13,8 @@ import { Banner } from "@/components/common/banner";
 
 import { TitleForm } from "./_components/title-form";
 import { DescriptionForm } from "./_components/description-form";
-// import { ImageForm } from "./_components/image-form";
-// import { CategoryForm } from "./_components/category-form";
+import { ImageForm } from "./_components/image-form";
+import { CategoryForm } from "./_components/category-form";
 // import { PriceForm } from "./_components/price-form";
 // import { AttachmentForm } from "./_components/attachment-form";
 // import { ChaptersForm } from "./_components/chapters-form";
@@ -34,13 +34,18 @@ type CourseType = {
   categoryId: string | null;
   createdAt: string;
   updatedAt: string;
-  chapters: any[]; // replace 'any' with the type of chapters
-  attachments: any[]; // replace 'any' with the type of attachments
+  chapters: any[];
+  attachments: any[];
+};
+
+type CategoryType = {
+  name: string;
+  id: string;
 };
 
 const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
   const [course, setCourse] = useState<CourseType | null>(null);
-  const [categories, setCategories] = useState(null);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -101,15 +106,25 @@ const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
                 courseId={course.id}
               />
             )}{" "}
-            {/* <ImageForm initialData={course} courseId={course.id} /> */}
-            {/* <CategoryForm
-              initialData={course}
-              courseId={course.id}
-              options={categories.map((category) => ({
-                label: category.name,
-                value: category.id,
-              }))}
-            /> */}
+            {course && (
+              <ImageForm
+                initialData={{
+                  ...course,
+                  imageUrl: course.imageUrl || "",
+                }}
+                courseId={course.id}
+              />
+            )}{" "}
+            {course && categories ? (
+              <CategoryForm
+                initialData={{ categoryId: course.categoryId || "" }}
+                courseId={course.id}
+                options={categories.map((category: CategoryType) => ({
+                  label: category.name,
+                  value: category.id,
+                }))}
+              />
+            ) : null}
           </div>
           <div className="space-y-6">
             <div>
