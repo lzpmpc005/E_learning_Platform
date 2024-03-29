@@ -6,5 +6,17 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function Setup() {
   useVerify();
-  return <ToastContainer />;
+  return (
+    <ToastContainer
+      position="top-center"
+      autoClose={5000}
+      hideProgressBar={true}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+    />
+  );
 }

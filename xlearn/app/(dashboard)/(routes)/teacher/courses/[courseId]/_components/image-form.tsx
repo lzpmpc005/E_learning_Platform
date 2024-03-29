@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { FileUpload } from "@/components/common/file-upload";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { set } from "react-hook-form";
 
 interface ImageFormProps {
   initialData: {
@@ -21,6 +22,7 @@ const formSchema = z.object({
 });
 
 export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
+  const [imageUrl, setImageUrl] = useState(initialData.imageUrl);
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleEdit = () => setIsEditing((current) => !current);
@@ -28,12 +30,20 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const userId = localStorage.getItem("userId");
-      await axios.patch(`/courses/${courseId}`, { ...values, userId });
+      const res = await axios.patch(`/courses/${courseId}`, {
+        ...values,
+        userId,
+      });
+      setImageUrl(res.data.imageUrl);
       toast.success("Course updated");
       toggleEdit();
-      location.reload();
-    } catch {
-      toast.error("Something went wrong");
+    } catch (error) {
+      if (error instanceof Error) {
+        const axiosError = error as any;
+        toast.error(axiosError.response.data.error);
+      } else {
+        toast.error("Something went wrong");
+      }
     }
   };
 
@@ -43,13 +53,13 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
         Course image
         <Button onClick={toggleEdit} variant="ghost">
           {isEditing && <>Cancel</>}
-          {!isEditing && !initialData.imageUrl && (
+          {!isEditing && !imageUrl && (
             <>
               <PlusCircle className="h-4 w-4 mr-2" />
               Upload course image
             </>
           )}
-          {!isEditing && initialData.imageUrl && (
+          {!isEditing && imageUrl && (
             <>
               <Pencil className="h-4 w-4 mr-2" />
               Update course image
@@ -58,7 +68,7 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
         </Button>
       </div>
       {!isEditing &&
-        (!initialData.imageUrl ? (
+        (!imageUrl ? (
           <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
             <ImageIcon className="h-10 w-10 text-slate-500" />
           </div>
@@ -68,7 +78,7 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
               alt="Upload"
               fill
               className="object-cover rounded-md"
-              src={initialData.imageUrl}
+              src={imageUrl}
               sizes="(max-width: 600px) 100vw, 600px"
             />
           </div>

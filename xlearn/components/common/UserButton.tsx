@@ -29,6 +29,7 @@ export default function UserButton() {
       .unwrap()
       .then(() => {
         dispatch(setLogout());
+        localStorage.removeItem("userId");
       })
       .finally(() => {
         router.push("/");

@@ -1,14 +1,13 @@
 "use client";
 
 import * as z from "zod";
-import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Loader2, PlusCircle } from "lucide-react";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import axios from "@/utils/axios";
+import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { Chapter, Course } from "@prisma/client";
 
 import {
   Form,
@@ -23,8 +22,23 @@ import { Input } from "@/components/ui/input";
 
 import { ChaptersList } from "./chapters-list";
 
+interface Chapter {
+  id: string;
+  title: string;
+  description?: string;
+  videoUrl?: string;
+  position: number;
+  isPublished: boolean;
+  isFree: boolean;
+  courseId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface ChaptersFormProps {
-  initialData: Course & { chapters: Chapter[] };
+  initialData: {
+    chapters: Chapter[];
+  };
   courseId: string;
 }
 
@@ -35,6 +49,7 @@ const formSchema = z.object({
 export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [chapters, setChapters] = useState(initialData.chapters);
 
   const toggleCreating = () => {
     setIsCreating((current) => !current);
@@ -53,28 +68,51 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await axios.post(`/api/courses/${courseId}/chapters`, values);
+      const userId = localStorage.getItem("userId");
+      const response = await axios.post(`/courses/${courseId}/chapters`, {
+        ...values,
+        userId,
+      });
+      setChapters((prevChapters) => {
+        const newChapters = [...prevChapters, response.data];
+        return newChapters;
+      });
       toast.success("Chapter created");
       toggleCreating();
-      router.refresh();
-    } catch {
-      toast.error("Something went wrong");
+      form.reset();
+    } catch (error) {
+      if (error instanceof Error) {
+        const axiosError = error as any;
+        toast.error(axiosError.response.data.error);
+      } else {
+        toast.error("Something went wrong");
+      }
     }
   };
 
   const onReorder = async (updateData: { id: string; position: number }[]) => {
     try {
       setIsUpdating(true);
-
-      await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
+      const userId = localStorage.getItem("userId");
+      await axios.put(`/courses/${courseId}/chapters/reorder`, {
         list: updateData,
+        userId: userId,
       });
       toast.success("Chapters reordered");
-      router.refresh();
+      fetchUpdatedData();
     } catch {
       toast.error("Something went wrong");
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const fetchUpdatedData = async () => {
+    try {
+      const response = await axios.get(`/courses/${courseId}/chapters`);
+      setChapters(response.data);
+    } catch (error) {
+      toast.error("Failed to fetch updated data");
     }
   };
 
@@ -141,7 +179,7 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
           <ChaptersList
             onEdit={onEdit}
             onReorder={onReorder}
-            items={initialData.chapters || []}
+            items={chapters || []}
           />
         </div>
       )}

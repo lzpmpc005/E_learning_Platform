@@ -1,11 +1,12 @@
+"use client";
+
 import * as z from "zod";
 import axios from "@/utils/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { Textarea } from "@/components/ui/textarea";
 
 import {
   Form,
@@ -14,26 +15,27 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
-interface DescriptionFormProps {
+interface ChapterTitleFormProps {
   initialData: {
-    description: string;
+    title: string;
   };
   courseId: string;
+  chapterId: string;
 }
 
 const formSchema = z.object({
-  description: z.string().min(1, {
-    message: "Description is required",
-  }),
+  title: z.string().min(1),
 });
 
-export const DescriptionForm = ({
+export const ChapterTitleForm = ({
   initialData,
   courseId,
-}: DescriptionFormProps) => {
+  chapterId,
+}: ChapterTitleFormProps) => {
+  const [chapterTitle, setchapterTitle] = useState(initialData.title);
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleEdit = () => setIsEditing((current) => !current);
@@ -44,17 +46,19 @@ export const DescriptionForm = ({
   });
 
   const { isSubmitting, isValid } = form.formState;
-  const [description, setDescription] = useState(initialData.description);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const userId = localStorage.getItem("userId");
-      const res = await axios.patch(`/courses/${courseId}`, {
-        ...values,
-        userId,
-      });
-      setDescription(res.data.description);
-      toast.success("Course updated");
+      const response = await axios.patch(
+        `/courses/${courseId}/chapters/${chapterId}`,
+        {
+          ...values,
+          userId,
+        }
+      );
+      setchapterTitle(response.data.title);
+      toast.success("Chapter updated");
       toggleEdit();
     } catch (error) {
       if (error instanceof Error) {
@@ -70,28 +74,19 @@ export const DescriptionForm = ({
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course description
+        Chapter title
         <Button onClick={toggleEdit} variant="ghost">
           {isEditing ? (
             <>Cancel</>
           ) : (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit description
+              Edit title
             </>
           )}
         </Button>
       </div>
-      {!isEditing && (
-        <p
-          className={cn(
-            "text-sm mt-2",
-            !description && "text-slate-500 italic"
-          )}
-        >
-          {description || "No description"}
-        </p>
-      )}
+      {!isEditing && <p className="text-sm mt-2">{chapterTitle}</p>}
       {isEditing && (
         <Form {...form}>
           <form
@@ -100,13 +95,13 @@ export const DescriptionForm = ({
           >
             <FormField
               control={form.control}
-              name="description"
+              name="title"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Textarea
+                    <Input
                       disabled={isSubmitting}
-                      placeholder="e.g. 'This course is about...'"
+                      placeholder="e.g. 'Introduction to the course'"
                       {...field}
                     />
                   </FormControl>

@@ -1,6 +1,5 @@
 "use client";
 
-import { Chapter } from "@prisma/client";
 import { useEffect, useState } from "react";
 import {
   DragDropContext,
@@ -12,6 +11,19 @@ import { Grip, Pencil } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+
+interface Chapter {
+  id: string;
+  title: string;
+  description?: string;
+  videoUrl?: string;
+  position: number;
+  isPublished: boolean;
+  isFree: boolean;
+  courseId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 interface ChaptersListProps {
   items: Chapter[];

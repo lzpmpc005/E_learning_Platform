@@ -32,6 +32,7 @@ const formSchema = z.object({
 });
 
 export const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
+  const [courseTitle, setCourseTitle] = useState(initialData.title);
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleEdit = () => setIsEditing((current) => !current);
@@ -46,12 +47,21 @@ export const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const userId = localStorage.getItem("userId");
-      await axios.patch(`/courses/${courseId}`, { ...values, userId });
+      const response = await axios.patch(`/courses/${courseId}`, {
+        ...values,
+        userId,
+      });
+      setCourseTitle(response.data.title);
       toast.success("Course updated");
       toggleEdit();
-      location.reload();
-    } catch {
-      toast.error("Something went wrong");
+    } catch (error) {
+      if (error instanceof Error) {
+        const axiosError = error as any;
+
+        toast.error(axiosError.response.data.error);
+      } else {
+        toast.error("Something went wrong");
+      }
     }
   };
 
@@ -70,7 +80,7 @@ export const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
           )}
         </Button>
       </div>
-      {!isEditing && <p className="text-sm mt-2">{initialData.title}</p>}
+      {!isEditing && <p className="text-sm mt-2">{courseTitle}</p>}
       {isEditing && (
         <Form {...form}>
           <form

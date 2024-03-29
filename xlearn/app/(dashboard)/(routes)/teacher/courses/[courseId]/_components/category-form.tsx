@@ -1,12 +1,12 @@
+"use client";
+
 import * as z from "zod";
 import axios from "@/utils/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { Textarea } from "@/components/ui/textarea";
-import { Combobox } from "@/components/ui/combobox";
 
 import {
   Form,
@@ -17,16 +17,15 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
+import { Combobox } from "@/components/ui/combobox";
 
 interface CategoryFormProps {
   initialData: {
     categoryId: string;
   };
   courseId: string;
-  options: {
-    label: string;
-    value: string;
-  }[];
+  options: { label: string; value: string }[];
 }
 
 const formSchema = z.object({
@@ -38,6 +37,7 @@ export const CategoryForm = ({
   courseId,
   options,
 }: CategoryFormProps) => {
+  const [categoryId, setCategoryId] = useState(initialData.categoryId);
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleEdit = () => setIsEditing((current) => !current);
@@ -54,18 +54,24 @@ export const CategoryForm = ({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const userId = localStorage.getItem("userId");
-      await axios.patch(`/courses/${courseId}`, { ...values, userId });
+      const res = await axios.patch(`/courses/${courseId}`, {
+        ...values,
+        userId,
+      });
+      setCategoryId(res.data.categoryId);
       toast.success("Course updated");
       toggleEdit();
-      location.reload();
-    } catch {
-      toast.error("Something went wrong");
+    } catch (error) {
+      if (error instanceof Error) {
+        const axiosError = error as any;
+        toast.error(axiosError.response.data.error);
+      } else {
+        toast.error("Something went wrong");
+      }
     }
   };
 
-  const selectedOption = options.find(
-    (option) => option.value === initialData.categoryId
-  );
+  const selectedOption = options.find((option) => option.value === categoryId);
 
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
@@ -84,10 +90,7 @@ export const CategoryForm = ({
       </div>
       {!isEditing && (
         <p
-          className={cn(
-            "text-sm mt-2",
-            !initialData.categoryId && "text-slate-500 italic"
-          )}
+          className={cn("text-sm mt-2", !categoryId && "text-slate-500 italic")}
         >
           {selectedOption?.label || "Category unspecified"}
         </p>
@@ -101,14 +104,17 @@ export const CategoryForm = ({
             <FormField
               control={form.control}
               name="categoryId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Combobox options={options} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                const { ref, ...restField } = field;
+                return (
+                  <FormItem>
+                    <FormControl>
+                      <Combobox options={options} {...restField} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
             <div className="flex items-center gap-x-2">
               <Button disabled={!isValid || isSubmitting} type="submit">

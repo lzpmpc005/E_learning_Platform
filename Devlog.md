@@ -13,7 +13,7 @@
 - Backend
   - User Manage Server: Django
     - Authentication Method: jwt
-  - Content Manage Server: undecided
+  - Content Manage Server: Express
   - Analysis Server: undecided
 - Database
   - Postgresql
@@ -138,3 +138,26 @@
   `node scripts/createCategories.ts`
   - had to provide the absolute api endpoint in the script, be sure to change it if server host changes
 - got a type error when render categories out for choosing, fix tomorrow
+
+### 29/03/2024
+
+- stuck by the type error for 5 hours, after trying many methods, found out it's the bug of latest version of shadcn-ui combobox component, downgrade cmdk version solves the issue, the developer has noticed this and should fix it in next release
+
+```npm uninstall cmdk
+   npm install cmdk@0.2.0
+```
+
+- got a warning that Popover component from @radix-ui/react-popover doesn't accept a ref prop, it doesn't cause a crash, but I want to resolve it
+
+  - since I am using react-hook-form library in the category-form, it provieds a ref in the field and when I spread the field onto the combobox component, the ref is passed to it, which caused that warning, resolve it by destructuring the field object and excluding ref, haven't seem any side effects for now
+
+- the local storage wasn't cleaned up after logout because I implemented the operation in verify which only called when refresh, fix it
+
+- optimize the toast reminder's postion and message
+- created course price update endpoint and frontend
+- created attachments update/delete endpoint and frontend
+- start creating charpters with hello-pangea/dnd
+  - Instead of reloading the entire page, I try to fetch the updated data again, which involves creating another api to return the charpters of the course. This will give a better user experience and I will do this to other forms as well.
+- modify JWT token lifetime to 24 hours to avoid frequent login, but it seems not working
+  - the setting actually works, it's the verify function causing this
+  - I was wrong, because I see the accessid and refreshid expire time and mistaken them as the token lifetime, but they are just cookies. So finally, I need to set JWT token lifetime in the form of datetime object as the official doc indicated

@@ -1,19 +1,41 @@
 "use client";
 
 import * as z from "zod";
-import axios from "axios";
-import { Pencil, PlusCircle, ImageIcon, File, Loader2, X } from "lucide-react";
+import { Pencil, PlusCircle, File, Loader2, X } from "lucide-react";
 import { useState } from "react";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { Attachment, Course } from "@prisma/client";
-import Image from "next/image";
+import axios from "@/utils/axios";
+import { toast } from "react-toastify";
 
 import { Button } from "@/components/ui/button";
-import { FileUpload } from "@/components/file-upload";
+import { FileUpload } from "@/components/common/file-upload";
+import { set } from "react-hook-form";
+
+interface Attachment {
+  id: string;
+  name: string;
+  url: string;
+  courseId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+type CourseType = {
+  id: string;
+  userId: string;
+  title: string;
+  description: string | null;
+  imageUrl: string | null;
+  price: number | null;
+  isPublished: boolean;
+  categoryId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  chapters: any[];
+  attachments: Attachment[];
+};
 
 interface AttachmentFormProps {
-  initialData: Course & { attachments: Attachment[] };
+  initialData: CourseType;
   courseId: string;
 }
 
@@ -25,32 +47,49 @@ export const AttachmentForm = ({
   initialData,
   courseId,
 }: AttachmentFormProps) => {
+  const [attachments, setAttachments] = useState<Attachment[]>(
+    initialData.attachments
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const toggleEdit = () => setIsEditing((current) => !current);
 
-  const router = useRouter();
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await axios.post(`/api/courses/${courseId}/attachments`, values);
+      const userId = localStorage.getItem("userId");
+      const res = await axios.post(`/courses/${courseId}/attachments`, {
+        ...values,
+        userId,
+      });
+      setAttachments((prevAttachments) => [...prevAttachments, res.data]);
       toast.success("Course updated");
       toggleEdit();
-      router.refresh();
-    } catch {
-      toast.error("Something went wrong");
+    } catch (error) {
+      if (error instanceof Error) {
+        const axiosError = error as any;
+        toast.error(axiosError.response.data.error);
+      } else {
+        toast.error("Something went wrong");
+      }
     }
   };
 
   const onDelete = async (id: string) => {
     try {
       setDeletingId(id);
-      await axios.delete(`/api/courses/${courseId}/attachments/${id}`);
+      await axios.delete(`/courses/${courseId}/attachments/${id}`);
+      setAttachments((prevAttachments) =>
+        prevAttachments.filter((attachment) => attachment.id !== id)
+      );
       toast.success("Attachment deleted");
-      router.refresh();
-    } catch {
-      toast.error("Something went wrong");
+    } catch (error) {
+      if (error instanceof Error) {
+        const axiosError = error as any;
+        toast.error(axiosError.response.data.error);
+      } else {
+        toast.error("Something went wrong");
+      }
     } finally {
       setDeletingId(null);
     }
@@ -72,14 +111,14 @@ export const AttachmentForm = ({
       </div>
       {!isEditing && (
         <>
-          {initialData.attachments.length === 0 && (
+          {attachments.length === 0 && (
             <p className="text-sm mt-2 text-slate-500 italic">
               No attachments yet
             </p>
           )}
-          {initialData.attachments.length > 0 && (
+          {attachments.length > 0 && (
             <div className="space-y-2">
-              {initialData.attachments.map((attachment) => (
+              {attachments.map((attachment) => (
                 <div
                   key={attachment.id}
                   className="flex items-center p-3 w-full bg-sky-100 border-sky-200 border text-sky-700 rounded-md"

@@ -15,15 +15,15 @@ import { TitleForm } from "./_components/title-form";
 import { DescriptionForm } from "./_components/description-form";
 import { ImageForm } from "./_components/image-form";
 import { CategoryForm } from "./_components/category-form";
-// import { PriceForm } from "./_components/price-form";
-// import { AttachmentForm } from "./_components/attachment-form";
-// import { ChaptersForm } from "./_components/chapters-form";
+import { PriceForm } from "./_components/price-form";
+import { AttachmentForm } from "./_components/attachment-form";
+import { ChaptersForm } from "./_components/chapters-form";
 // import { Actions } from "./_components/actions";
 import { useEffect, useState } from "react";
 import axios from "@/utils/axios";
 import { Title } from "@radix-ui/react-dialog";
 
-type CourseType = {
+export type CourseType = {
   id: string;
   userId: string;
   title: string;
@@ -39,8 +39,8 @@ type CourseType = {
 };
 
 type CategoryType = {
-  name: string;
   id: string;
+  name: string;
 };
 
 const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
@@ -70,7 +70,6 @@ const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
       setLoading(false);
     })();
   }, [params.courseId]);
-
   return (
     <>
       {/* {!course.isPublished && (
@@ -96,34 +95,34 @@ const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
               <IconBadge icon={LayoutDashboard} />
               <h2 className="text-xl">Customize your course</h2>
             </div>
-            {course && <TitleForm initialData={course} courseId={course.id} />}
-            {course && (
-              <DescriptionForm
-                initialData={{
-                  ...course,
-                  description: course.description || "",
-                }}
-                courseId={course.id}
-              />
-            )}{" "}
-            {course && (
-              <ImageForm
-                initialData={{
-                  ...course,
-                  imageUrl: course.imageUrl || "",
-                }}
-                courseId={course.id}
-              />
-            )}{" "}
-            {course && categories ? (
-              <CategoryForm
-                initialData={{ categoryId: course.categoryId || "" }}
-                courseId={course.id}
-                options={categories.map((category: CategoryType) => ({
-                  label: category.name,
-                  value: category.id,
-                }))}
-              />
+            {course ? (
+              <>
+                <TitleForm initialData={course} courseId={course.id} />
+                <DescriptionForm
+                  initialData={{
+                    ...course,
+                    description: course.description || "",
+                  }}
+                  courseId={course.id}
+                />
+                <ImageForm
+                  initialData={{
+                    ...course,
+                    imageUrl: course.imageUrl || "",
+                  }}
+                  courseId={course.id}
+                />
+                {categories.length > 0 && (
+                  <CategoryForm
+                    initialData={{ categoryId: course.categoryId || "" }}
+                    courseId={course.id}
+                    options={categories.map((category: CategoryType) => ({
+                      label: category.name,
+                      value: category.id,
+                    }))}
+                  />
+                )}
+              </>
             ) : null}
           </div>
           <div className="space-y-6">
@@ -132,21 +131,27 @@ const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
                 <IconBadge icon={ListChecks} />
                 <h2 className="text-xl">Course chapters</h2>
               </div>
-              {/* <ChaptersForm initialData={course} courseId={course.id} /> */}
+              {course ? (
+                <ChaptersForm initialData={course} courseId={course.id} />
+              ) : null}
             </div>
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={CircleDollarSign} />
-                <h2 className="text-xl">Sell your course</h2>
+                <h2 className="text-xl">Sell your knowledge</h2>
               </div>
-              {/* <PriceForm initialData={course} courseId={course.id} /> */}
+              {course && (
+                <PriceForm initialData={course} courseId={course.id} />
+              )}
             </div>
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={File} />
                 <h2 className="text-xl">Resources & Attachments</h2>
               </div>
-              {/* <AttachmentForm initialData={course} courseId={course.id} /> */}
+              {course && (
+                <AttachmentForm initialData={course} courseId={course.id} />
+              )}
             </div>
           </div>
         </div>

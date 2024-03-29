@@ -3,12 +3,10 @@
 import * as z from "zod";
 import axios from "@/utils/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
-import { Course } from "@prisma/client";
 
 import {
   Form,
@@ -23,7 +21,9 @@ import { Input } from "@/components/ui/input";
 import { formatPrice } from "@/lib/format";
 
 interface PriceFormProps {
-  initialData: Course;
+  initialData: {
+    price: number | null;
+  };
   courseId: string;
 }
 
@@ -32,16 +32,16 @@ const formSchema = z.object({
 });
 
 export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
+  const [price, setPrice] = useState(initialData.price);
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleEdit = () => setIsEditing((current) => !current);
 
-  const router = useRouter();
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      price: initialData?.price || undefined,
+      price:
+        initialData?.price !== null ? Number(initialData.price) : undefined,
     },
   });
 
@@ -49,12 +49,22 @@ export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await axios.patch(`/api/courses/${courseId}`, values);
+      const userId = localStorage.getItem("userId");
+      const response = await axios.patch(`/courses/${courseId}`, {
+        ...values,
+        userId,
+      });
+      setPrice(response.data.price);
       toast.success("Course updated");
       toggleEdit();
-      router.refresh();
-    } catch {
-      toast.error("Something went wrong");
+    } catch (error) {
+      if (error instanceof Error) {
+        const axiosError = error as any;
+
+        toast.error(axiosError.response.data.error);
+      } else {
+        toast.error("Something went wrong");
+      }
     }
   };
 
@@ -74,13 +84,8 @@ export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
         </Button>
       </div>
       {!isEditing && (
-        <p
-          className={cn(
-            "text-sm mt-2",
-            !initialData.price && "text-slate-500 italic"
-          )}
-        >
-          {initialData.price ? formatPrice(initialData.price) : "No price"}
+        <p className={cn("text-sm mt-2", !price && "text-slate-500 italic")}>
+          {price ? formatPrice(price) : "Price unset"}
         </p>
       )}
       {isEditing && (
