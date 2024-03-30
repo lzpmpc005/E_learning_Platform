@@ -73,6 +73,7 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
         ...values,
         userId,
       });
+      console.log(response.data);
       setChapters((prevChapters) => {
         const newChapters = [...prevChapters, response.data];
         return newChapters;
@@ -172,10 +173,10 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
         <div
           className={cn(
             "text-sm mt-2",
-            !initialData.chapters.length && "text-slate-500 italic"
+            !chapters.length && "text-slate-500 italic"
           )}
         >
-          {!initialData.chapters.length && "No chapters"}
+          {!chapters.length && "No chapters"}
           <ChaptersList
             onEdit={onEdit}
             onReorder={onReorder}

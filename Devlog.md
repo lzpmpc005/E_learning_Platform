@@ -161,3 +161,24 @@
 - modify JWT token lifetime to 24 hours to avoid frequent login, but it seems not working
   - the setting actually works, it's the verify function causing this
   - I was wrong, because I see the accessid and refreshid expire time and mistaken them as the token lifetime, but they are just cookies. So finally, I need to set JWT token lifetime in the form of datetime object as the official doc indicated
+
+### 30/03/2024
+
+- resolve newly created chapter can only be edited after reload the page
+- refresh on chapter page will be redirect to home page
+  - fix by redefine page component function
+- implement chapter title, description, access setting
+- implement chapter video manage with MUX
+
+  - get mux api token id and key
+  - install dependencies
+
+    ```npm i @mux/mux-node
+       npm i @mux/mux-player-react
+    ```
+
+  - first implement mux operation at client side, encounter CORS error, move it to content server
+  - set muxplayer rerender after 3 seconds to prevent media download failer
+
+- implement delete chapter endpoint and frontend component
+- implement chapter publish/unpublish

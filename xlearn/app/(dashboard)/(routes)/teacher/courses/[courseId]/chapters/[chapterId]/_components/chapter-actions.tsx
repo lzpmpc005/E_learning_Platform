@@ -9,13 +9,19 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmModal } from "@/components/modals/confirm-modal";
 
-interface ActionsProps {
+interface ChapterActionsProps {
   disabled: boolean;
   courseId: string;
+  chapterId: string;
   isPublished: boolean;
 }
 
-export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
+export const ChapterActions = ({
+  disabled,
+  courseId,
+  chapterId,
+  isPublished,
+}: ChapterActionsProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,13 +31,19 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
       const userId = localStorage.getItem("userId");
 
       if (isPublished) {
-        await axios.patch(`/courses/${courseId}/unpublish`, { userId });
+        await axios.patch(
+          `/courses/${courseId}/chapters/${chapterId}/unpublish`,
+          { userId }
+        );
         router.push(`/teacher/courses/${courseId}`);
-        toast.success("Course unpublished");
+        toast.success("Chapter unpublished");
       } else {
-        await axios.patch(`/courses/${courseId}/publish`, { userId });
+        await axios.patch(
+          `/courses/${courseId}/chapters/${chapterId}/publish`,
+          { userId }
+        );
         router.push(`/teacher/courses/${courseId}`);
-        toast.success("Course published");
+        toast.success("Chapter published");
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -51,13 +63,13 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
       setIsLoading(true);
       const userId = localStorage.getItem("userId");
 
-      await axios.delete(`/courses/${courseId}`, {
+      await axios.delete(`/courses/${courseId}/chapters/${chapterId}`, {
         data: { userId },
       });
 
-      toast.success("Course deleted");
+      toast.success("Chapter deleted");
 
-      router.push(`/teacher/courses`);
+      router.push(`/teacher/courses/${courseId}`);
     } catch (error) {
       if (error instanceof Error) {
         const axiosError = error as any;

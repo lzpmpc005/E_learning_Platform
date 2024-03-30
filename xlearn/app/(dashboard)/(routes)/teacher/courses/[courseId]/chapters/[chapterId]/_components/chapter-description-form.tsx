@@ -18,31 +18,44 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-interface ChapterTitleFormProps {
-  initialData: {
-    title: string;
-  };
+interface Chapter {
+  id: string;
+  title: string;
+  description?: string;
+  videoUrl?: string | null;
+  position: number;
+  isPublished: boolean;
+  isFree: boolean;
+  courseId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface ChapterDescriptionFormProps {
+  initialData: Chapter;
   courseId: string;
   chapterId: string;
+  onChapterUpdate: (chapter: Chapter) => void;
 }
 
 const formSchema = z.object({
-  title: z.string().min(1),
+  description: z.string().min(1),
 });
 
-export const ChapterTitleForm = ({
+export const ChapterDescriptionForm = ({
   initialData,
   courseId,
   chapterId,
-}: ChapterTitleFormProps) => {
-  const [chapterTitle, setchapterTitle] = useState(initialData.title);
+  onChapterUpdate,
+}: ChapterDescriptionFormProps) => {
+  const [chapter, setChapter] = useState(initialData);
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleEdit = () => setIsEditing((current) => !current);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData,
+    defaultValues: { description: initialData?.description || "" },
   });
 
   const { isSubmitting, isValid } = form.formState;
@@ -57,7 +70,8 @@ export const ChapterTitleForm = ({
           userId,
         }
       );
-      setchapterTitle(response.data.chapter.title);
+      setChapter(response.data.chapter);
+      onChapterUpdate(response.data.chapter);
       toast.success("Chapter updated");
       toggleEdit();
     } catch (error) {
@@ -74,19 +88,19 @@ export const ChapterTitleForm = ({
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Chapter title
+        Chapter description
         <Button onClick={toggleEdit} variant="ghost">
           {isEditing ? (
             <>Cancel</>
           ) : (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit title
+              Edit description
             </>
           )}
         </Button>
       </div>
-      {!isEditing && <p className="text-sm mt-2">{chapterTitle}</p>}
+      {!isEditing && <p className="text-sm mt-2">{chapter.description}</p>}
       {isEditing && (
         <Form {...form}>
           <form
@@ -95,13 +109,13 @@ export const ChapterTitleForm = ({
           >
             <FormField
               control={form.control}
-              name="title"
+              name="description"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
                       disabled={isSubmitting}
-                      placeholder="e.g. 'Introduction to the course'"
+                      placeholder="e.g. 'Summary of the chapter'"
                       {...field}
                     />
                   </FormControl>

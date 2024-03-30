@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import { FileUpload } from "@/components/common/file-upload";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { set } from "react-hook-form";
 
 interface ImageFormProps {
   initialData: {

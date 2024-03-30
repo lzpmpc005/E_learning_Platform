@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@mux/mux-node": "^8.2.3",
     "@prisma/client": "^5.11.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",

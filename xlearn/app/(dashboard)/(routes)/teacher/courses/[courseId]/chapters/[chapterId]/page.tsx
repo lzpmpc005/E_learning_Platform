@@ -9,47 +9,76 @@ import { Banner } from "@/components/common/banner";
 import axios from "@/utils/axios";
 
 import { ChapterTitleForm } from "./_components/chapter-title-form";
-// import { ChapterDescriptionForm } from "./_components/chapter-description-form";
-// import { ChapterAccessForm } from "./_components/chapter-access-form";
-// import { ChapterVideoForm } from "./_components/chapter-video-form";
-// import { ChapterActions } from "./_components/chapter-actions";
+import { toast } from "react-toastify";
+import { useState, useEffect } from "react";
+import { ChapterDescriptionForm } from "./_components/chapter-description-form";
+import { ChapterAccessForm } from "./_components/chapter-access-form";
+import { ChapterVideoForm } from "./_components/chapter-video-form";
+import { ChapterActions } from "./_components/chapter-actions";
 
-const ChapterIdPage = async ({
+interface Chapter {
+  id: string;
+  title: string;
+  description?: string;
+  videoUrl?: string | null;
+  position: number;
+  isPublished: boolean;
+  isFree: boolean;
+  courseId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const ChapterIdPage = ({
   params,
 }: {
   params: { courseId: string; chapterId: string };
 }) => {
-  const userId =
-    typeof window !== "undefined"
-      ? window.localStorage.getItem("userId")
-      : null;
+  const [chapter, setChapter] = useState<Chapter | null>(null);
+  const [completionText, setCompletionText] = useState("");
+  const [isComplete, setIsComplete] = useState(false);
+  useEffect(() => {
+    const userId = window.localStorage.getItem("userId");
 
-  if (!userId) {
-    return redirect("/");
-  }
+    if (userId) {
+      axios
+        .get(`/courses/${params.courseId}/chapters/${params.chapterId}`)
+        .then((res) => {
+          setChapter(res.data);
+          handleChapterUpdate(res.data);
+        })
+        .catch((err) => {
+          console.error(err);
+          redirect("/");
+        });
+    } else {
+      redirect("/");
+    }
+  }, []);
 
-  const res = await axios.get(
-    `/courses/${params.courseId}/chapters/${params.chapterId}`
-  );
+  const handleChapterUpdate = (updatedChapter: Chapter) => {
+    setChapter(updatedChapter);
 
-  const chapter = res.data;
+    const requiredFields = updatedChapter
+      ? [
+          updatedChapter.title,
+          updatedChapter.description,
+          updatedChapter.videoUrl,
+        ]
+      : [];
+    const completedFields = requiredFields.filter(Boolean).length;
 
-  if (!chapter) {
-    return redirect("/");
-  }
+    const totalFields = requiredFields.length;
+    const newCompletionText = `(${completedFields}/${totalFields})`;
+    const newIsComplete = requiredFields.every(Boolean);
 
-  const requiredFields = [chapter.title, chapter.description, chapter.videoUrl];
-
-  const totalFields = requiredFields.length;
-  const completedFields = requiredFields.filter(Boolean).length;
-
-  const completionText = `(${completedFields}/${totalFields})`;
-
-  const isComplete = requiredFields.every(Boolean);
+    setCompletionText(newCompletionText);
+    setIsComplete(newIsComplete);
+  };
 
   return (
     <>
-      {!chapter.isPublished && (
+      {chapter && !chapter.isPublished && (
         <Banner
           variant="warning"
           label="This chapter is unpublished. It will not be visible in the course"
@@ -72,12 +101,12 @@ const ChapterIdPage = async ({
                   Complete all fields {completionText}
                 </span>
               </div>
-              {/* <ChapterActions
+              <ChapterActions
                 disabled={!isComplete}
                 courseId={params.courseId}
                 chapterId={params.chapterId}
-                isPublished={chapter.isPublished}
-              /> */}
+                isPublished={chapter ? chapter.isPublished : false}
+              />
             </div>
           </div>
         </div>
@@ -88,27 +117,35 @@ const ChapterIdPage = async ({
                 <IconBadge icon={LayoutDashboard} />
                 <h2 className="text-xl">Customize your chapter</h2>
               </div>
-              <ChapterTitleForm
-                initialData={chapter}
-                courseId={params.courseId}
-                chapterId={params.chapterId}
-              />
-              {/* <ChapterDescriptionForm
-                initialData={chapter}
-                courseId={params.courseId}
-                chapterId={params.chapterId}
-              /> */}
+              {chapter && (
+                <ChapterTitleForm
+                  initialData={chapter}
+                  courseId={params.courseId}
+                  chapterId={params.chapterId}
+                />
+              )}
+              {chapter &&
+                (chapter.description || chapter.description === null) && (
+                  <ChapterDescriptionForm
+                    initialData={chapter}
+                    courseId={params.courseId}
+                    chapterId={params.chapterId}
+                    onChapterUpdate={handleChapterUpdate}
+                  />
+                )}
             </div>
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={Eye} />
                 <h2 className="text-xl">Access Settings</h2>
               </div>
-              {/* <ChapterAccessForm
-                initialData={chapter}
-                courseId={params.courseId}
-                chapterId={params.chapterId}
-              /> */}
+              {chapter && (
+                <ChapterAccessForm
+                  initialData={chapter}
+                  courseId={params.courseId}
+                  chapterId={params.chapterId}
+                />
+              )}
             </div>
           </div>
           <div>
@@ -116,11 +153,13 @@ const ChapterIdPage = async ({
               <IconBadge icon={Video} />
               <h2 className="text-xl">Add a video</h2>
             </div>
-            {/* <ChapterVideoForm
-              initialData={chapter}
-              chapterId={params.chapterId}
-              courseId={params.courseId}
-            /> */}
+            {chapter && (
+              <ChapterVideoForm
+                initialData={chapter}
+                chapterId={params.chapterId}
+                courseId={params.courseId}
+              />
+            )}
           </div>
         </div>
       </div>

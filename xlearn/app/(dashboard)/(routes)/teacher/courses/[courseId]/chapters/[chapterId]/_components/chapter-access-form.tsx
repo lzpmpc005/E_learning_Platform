@@ -14,35 +14,40 @@ import {
   FormField,
   FormItem,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 
-interface ChapterTitleFormProps {
+interface ChapterAccessFormProps {
   initialData: {
-    title: string;
+    isFree: boolean;
   };
   courseId: string;
   chapterId: string;
 }
 
 const formSchema = z.object({
-  title: z.string().min(1),
+  isFree: z.boolean().default(false),
 });
 
-export const ChapterTitleForm = ({
+export const ChapterAccessForm = ({
   initialData,
   courseId,
   chapterId,
-}: ChapterTitleFormProps) => {
-  const [chapterTitle, setchapterTitle] = useState(initialData.title);
+}: ChapterAccessFormProps) => {
+  const [isFree, setIsFree] = useState(initialData.isFree);
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleEdit = () => setIsEditing((current) => !current);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData,
+    defaultValues: {
+      isFree: !!isFree,
+    },
   });
 
   const { isSubmitting, isValid } = form.formState;
@@ -57,7 +62,7 @@ export const ChapterTitleForm = ({
           userId,
         }
       );
-      setchapterTitle(response.data.chapter.title);
+      setIsFree(response.data.chapter.isFree);
       toast.success("Chapter updated");
       toggleEdit();
     } catch (error) {
@@ -74,19 +79,27 @@ export const ChapterTitleForm = ({
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Chapter title
+        Access setting
         <Button onClick={toggleEdit} variant="ghost">
           {isEditing ? (
             <>Cancel</>
           ) : (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit title
+              Set access
             </>
           )}
         </Button>
       </div>
-      {!isEditing && <p className="text-sm mt-2">{chapterTitle}</p>}
+      {!isEditing && (
+        <div className={cn("text-sm mt-2", !isFree && "text-slate-500 italic")}>
+          {isFree ? (
+            <>This chapter is free for preview.</>
+          ) : (
+            <>Ha! Give me you money.</>
+          )}
+        </div>
+      )}
       {isEditing && (
         <Form {...form}>
           <form
@@ -95,17 +108,20 @@ export const ChapterTitleForm = ({
           >
             <FormField
               control={form.control}
-              name="title"
+              name="isFree"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                   <FormControl>
-                    <Input
-                      disabled={isSubmitting}
-                      placeholder="e.g. 'Introduction to the course'"
-                      {...field}
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <div className="space-y-1 leading-none">
+                    <FormDescription>
+                      Check this box if you want to make this chapter free
+                    </FormDescription>
+                  </div>
                 </FormItem>
               )}
             />
