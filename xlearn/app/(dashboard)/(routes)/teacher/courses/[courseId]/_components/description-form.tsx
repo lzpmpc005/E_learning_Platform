@@ -1,11 +1,12 @@
 import * as z from "zod";
 import axios from "@/utils/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Textarea } from "@/components/ui/textarea";
+import { CourseType } from "../page";
 
 import {
   Form,
@@ -22,6 +23,7 @@ interface DescriptionFormProps {
     description: string;
   };
   courseId: string;
+  onCourseUpdate: (course: CourseType) => void;
 }
 
 const formSchema = z.object({
@@ -33,6 +35,7 @@ const formSchema = z.object({
 export const DescriptionForm = ({
   initialData,
   courseId,
+  onCourseUpdate,
 }: DescriptionFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -54,15 +57,21 @@ export const DescriptionForm = ({
         userId,
       });
       setDescription(res.data.description);
+      onCourseUpdate(res.data);
       toast.success("Course updated");
       toggleEdit();
     } catch (error) {
       if (error instanceof Error) {
         const axiosError = error as any;
-
-        toast.error(axiosError.response.data.error);
+        if (axiosError.response) {
+          toast.error(axiosError.response.data.error);
+        } else if (axiosError.request) {
+          toast.error("No response from server");
+        } else {
+          toast.error("Error setting up request");
+        }
       } else {
-        toast.error("Something went wrong");
+        toast.error("An unexpected error occurred");
       }
     }
   };

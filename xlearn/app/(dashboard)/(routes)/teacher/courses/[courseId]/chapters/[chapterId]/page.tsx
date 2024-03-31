@@ -16,7 +16,7 @@ import { ChapterAccessForm } from "./_components/chapter-access-form";
 import { ChapterVideoForm } from "./_components/chapter-video-form";
 import { ChapterActions } from "./_components/chapter-actions";
 
-interface Chapter {
+export interface Chapter {
   id: string;
   title: string;
   description?: string;
@@ -101,12 +101,15 @@ const ChapterIdPage = ({
                   Complete all fields {completionText}
                 </span>
               </div>
-              <ChapterActions
-                disabled={!isComplete}
-                courseId={params.courseId}
-                chapterId={params.chapterId}
-                isPublished={chapter ? chapter.isPublished : false}
-              />
+              {chapter && (
+                <ChapterActions
+                  disabled={!isComplete}
+                  courseId={params.courseId}
+                  chapterId={params.chapterId}
+                  isPublished={chapter.isPublished}
+                  onChapterUpdate={handleChapterUpdate}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -158,6 +161,7 @@ const ChapterIdPage = ({
                 initialData={chapter}
                 chapterId={params.chapterId}
                 courseId={params.courseId}
+                onChapterUpdate={handleChapterUpdate}
               />
             )}
           </div>

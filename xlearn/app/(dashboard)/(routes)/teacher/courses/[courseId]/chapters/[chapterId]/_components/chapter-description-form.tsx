@@ -17,19 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-interface Chapter {
-  id: string;
-  title: string;
-  description?: string;
-  videoUrl?: string | null;
-  position: number;
-  isPublished: boolean;
-  isFree: boolean;
-  courseId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { Chapter } from "../page";
 
 interface ChapterDescriptionFormProps {
   initialData: Chapter;
@@ -77,10 +65,15 @@ export const ChapterDescriptionForm = ({
     } catch (error) {
       if (error instanceof Error) {
         const axiosError = error as any;
-
-        toast.error(axiosError.response.data.error);
+        if (axiosError.response) {
+          toast.error(axiosError.response.data.error);
+        } else if (axiosError.request) {
+          toast.error("No response from server");
+        } else {
+          toast.error("Error setting up request");
+        }
       } else {
-        toast.error("Something went wrong");
+        toast.error("An unexpected error occurred");
       }
     }
   };

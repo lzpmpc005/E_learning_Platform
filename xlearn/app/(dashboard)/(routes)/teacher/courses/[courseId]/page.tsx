@@ -21,7 +21,6 @@ import { ChaptersForm } from "./_components/chapters-form";
 import { Actions } from "./_components/actions";
 import { useEffect, useState } from "react";
 import axios from "@/utils/axios";
-import { Title } from "@radix-ui/react-dialog";
 
 export type CourseType = {
   id: string;
@@ -36,9 +35,10 @@ export type CourseType = {
   updatedAt: string;
   chapters: any[];
   attachments: any[];
+  purchases: any[];
 };
 
-type CategoryType = {
+export type CategoryType = {
   id: string;
   name: string;
 };
@@ -48,6 +48,9 @@ const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  const [completionText, setCompletionText] = useState("");
+  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -66,27 +69,35 @@ const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
         return;
       }
       setCourse(course);
+      handleCourseUpdate(course);
       setCategories(categories);
       setLoading(false);
     })();
   }, [params.courseId]);
 
-  const requiredFields = course
-    ? [
-        course.title,
-        course.description,
-        course.imageUrl,
-        course.price,
-        course.categoryId,
-        course.chapters.some((chapter) => chapter.isPublished),
-      ]
-    : [];
-  const totalFields = requiredFields.length;
-  const completedFields = requiredFields.filter(Boolean).length;
+  const handleCourseUpdate = (updatedCourse: CourseType) => {
+    setCourse(updatedCourse);
 
-  const completionText = `(${completedFields}/${totalFields})`;
+    const requiredFields = updatedCourse
+      ? [
+          updatedCourse.title,
+          updatedCourse.description,
+          updatedCourse.imageUrl,
+          updatedCourse.price,
+          updatedCourse.categoryId,
+          updatedCourse.chapters &&
+            updatedCourse.chapters.some((chapter) => chapter.isPublished),
+        ]
+      : [];
 
-  const isComplete = requiredFields.every(Boolean);
+    const completedFields = requiredFields.filter(Boolean).length;
+    const totalFields = requiredFields.length;
+    const newCompletionText = `(${completedFields}/${totalFields})`;
+    const newIsComplete = requiredFields.every(Boolean);
+
+    setCompletionText(newCompletionText);
+    setIsComplete(newIsComplete);
+  };
 
   return (
     <>
@@ -101,11 +112,14 @@ const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
               Complete all fields {completionText}
             </span>
           </div>
-          <Actions
-            disabled={!isComplete}
-            courseId={params.courseId}
-            isPublished={course ? course.isPublished : false}
-          />
+          {course && (
+            <Actions
+              disabled={!isComplete}
+              courseId={params.courseId}
+              isPublished={course.isPublished}
+              onCourseUpdate={handleCourseUpdate}
+            />
+          )}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
           <div>
@@ -122,6 +136,7 @@ const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
                     description: course.description || "",
                   }}
                   courseId={course.id}
+                  onCourseUpdate={handleCourseUpdate}
                 />
                 <ImageForm
                   initialData={{
@@ -129,6 +144,7 @@ const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
                     imageUrl: course.imageUrl || "",
                   }}
                   courseId={course.id}
+                  onCourseUpdate={handleCourseUpdate}
                 />
                 {categories.length > 0 && (
                   <CategoryForm
@@ -138,6 +154,7 @@ const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
                       label: category.name,
                       value: category.id,
                     }))}
+                    onCourseUpdate={handleCourseUpdate}
                   />
                 )}
               </>
@@ -150,7 +167,11 @@ const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
                 <h2 className="text-xl">Course chapters</h2>
               </div>
               {course ? (
-                <ChaptersForm initialData={course} courseId={course.id} />
+                <ChaptersForm
+                  initialData={course}
+                  courseId={course.id}
+                  onCourseUpdate={handleCourseUpdate}
+                />
               ) : null}
             </div>
             <div>
@@ -159,7 +180,11 @@ const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
                 <h2 className="text-xl">Sell your knowledge</h2>
               </div>
               {course && (
-                <PriceForm initialData={course} courseId={course.id} />
+                <PriceForm
+                  initialData={course}
+                  courseId={course.id}
+                  onCourseUpdate={handleCourseUpdate}
+                />
               )}
             </div>
             <div>

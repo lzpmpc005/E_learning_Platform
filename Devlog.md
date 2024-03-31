@@ -182,3 +182,22 @@
 
 - implement delete chapter endpoint and frontend component
 - implement chapter publish/unpublish
+
+### 31/03/2024
+
+- modify course and chapter page components to count completed fields actively after every update
+  - modify api endpoints to response with full information of courses and chapters
+- optimize error handler to give more specific error message
+- main endpoints file grows too big, split into separated files, more organized
+- implement course publish/unpublish
+- add a confetti effect when publish course
+- implement course list table inside teacher dashboard with sort and filter and also direct access to edit s specif course
+- build explore page for published courses
+  ```npm i quert-string
+     npm i react-icons
+  ```
+  - implement filter by search title (contain) only or together with category, category choice will reserve after refresh, but search title will be reset
+  - create course card to display course details
+    - if purchased, show progress, otherwise, show price
+- build course inside components
+  - something wrong with fetch course based on id, fix tomorrows

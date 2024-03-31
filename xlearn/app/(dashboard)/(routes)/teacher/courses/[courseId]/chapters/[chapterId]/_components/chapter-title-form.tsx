@@ -63,10 +63,15 @@ export const ChapterTitleForm = ({
     } catch (error) {
       if (error instanceof Error) {
         const axiosError = error as any;
-
-        toast.error(axiosError.response.data.error);
+        if (axiosError.response) {
+          toast.error(axiosError.response.data.error);
+        } else if (axiosError.request) {
+          toast.error("No response from server");
+        } else {
+          toast.error("Error setting up request");
+        }
       } else {
-        toast.error("Something went wrong");
+        toast.error("An unexpected error occurred");
       }
     }
   };

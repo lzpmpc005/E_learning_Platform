@@ -1,14 +1,13 @@
 "use client";
 
 import * as z from "zod";
-import { Pencil, PlusCircle, File, Loader2, X } from "lucide-react";
+import { PlusCircle, File, Loader2, X } from "lucide-react";
 import { useState } from "react";
 import axios from "@/utils/axios";
 import { toast } from "react-toastify";
 
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/common/file-upload";
-import { set } from "react-hook-form";
 
 interface Attachment {
   id: string;
@@ -68,9 +67,15 @@ export const AttachmentForm = ({
     } catch (error) {
       if (error instanceof Error) {
         const axiosError = error as any;
-        toast.error(axiosError.response.data.error);
+        if (axiosError.response) {
+          toast.error(axiosError.response.data.error);
+        } else if (axiosError.request) {
+          toast.error("No response from server");
+        } else {
+          toast.error("Error setting up request");
+        }
       } else {
-        toast.error("Something went wrong");
+        toast.error("An unexpected error occurred");
       }
     }
   };
@@ -86,9 +91,15 @@ export const AttachmentForm = ({
     } catch (error) {
       if (error instanceof Error) {
         const axiosError = error as any;
-        toast.error(axiosError.response.data.error);
+        if (axiosError.response) {
+          toast.error(axiosError.response.data.error);
+        } else if (axiosError.request) {
+          toast.error("No response from server");
+        } else {
+          toast.error("Error setting up request");
+        }
       } else {
-        toast.error("Something went wrong");
+        toast.error("An unexpected error occurred");
       }
     } finally {
       setDeletingId(null);

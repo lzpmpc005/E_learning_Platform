@@ -2,7 +2,7 @@ import * as z from "zod";
 import axios from "@/utils/axios";
 import MuxPlayer from "@mux/mux-player-react";
 import { Pencil, PlusCircle, VideoIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { FileUpload } from "@/components/common/file-upload";
 
@@ -32,6 +32,7 @@ interface ChapterVideoFormProps {
   initialData: Chapter & { muxData?: MuxData | null };
   courseId: string;
   chapterId: string;
+  onChapterUpdate: (chapter: Chapter) => void;
 }
 
 const formSchema = z.object({
@@ -42,6 +43,7 @@ export const ChapterVideoForm = ({
   initialData,
   courseId,
   chapterId,
+  onChapterUpdate,
 }: ChapterVideoFormProps) => {
   const [muxData, setMuxData] = useState(initialData.muxData);
   const [chapter, setChapter] = useState(initialData);
@@ -63,6 +65,7 @@ export const ChapterVideoForm = ({
       );
 
       setChapter(res.data.chapter);
+      onChapterUpdate(res.data.chapter);
       setMuxData(res.data.muxData);
       setTimeout(() => {
         setLoading(false);
@@ -73,9 +76,15 @@ export const ChapterVideoForm = ({
     } catch (error) {
       if (error instanceof Error) {
         const axiosError = error as any;
-        toast.error(axiosError.response.data.error);
+        if (axiosError.response) {
+          toast.error(axiosError.response.data.error);
+        } else if (axiosError.request) {
+          toast.error("No response from server");
+        } else {
+          toast.error("Error setting up request");
+        }
       } else {
-        toast.error("Something went wrong");
+        toast.error("An unexpected error occurred");
       }
     }
   };

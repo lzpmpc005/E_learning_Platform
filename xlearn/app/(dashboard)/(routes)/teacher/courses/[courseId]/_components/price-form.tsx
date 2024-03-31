@@ -3,7 +3,7 @@
 import * as z from "zod";
 import axios from "@/utils/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -19,19 +19,25 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { formatPrice } from "@/lib/format";
+import { CourseType } from "../page";
 
 interface PriceFormProps {
   initialData: {
     price: number | null;
   };
   courseId: string;
+  onCourseUpdate: (course: CourseType) => void;
 }
 
 const formSchema = z.object({
   price: z.coerce.number(),
 });
 
-export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
+export const PriceForm = ({
+  initialData,
+  courseId,
+  onCourseUpdate,
+}: PriceFormProps) => {
   const [price, setPrice] = useState(initialData.price);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -55,15 +61,21 @@ export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
         userId,
       });
       setPrice(response.data.price);
+      onCourseUpdate(response.data);
       toast.success("Course updated");
       toggleEdit();
     } catch (error) {
       if (error instanceof Error) {
         const axiosError = error as any;
-
-        toast.error(axiosError.response.data.error);
+        if (axiosError.response) {
+          toast.error(axiosError.response.data.error);
+        } else if (axiosError.request) {
+          toast.error("No response from server");
+        } else {
+          toast.error("Error setting up request");
+        }
       } else {
-        toast.error("Something went wrong");
+        toast.error("An unexpected error occurred");
       }
     }
   };

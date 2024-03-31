@@ -6,12 +6,14 @@ import { toast } from "react-toastify";
 import { FileUpload } from "@/components/common/file-upload";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { CourseType } from "../page";
 
 interface ImageFormProps {
   initialData: {
     imageUrl: string;
   };
   courseId: string;
+  onCourseUpdate: (course: CourseType) => void;
 }
 
 const formSchema = z.object({
@@ -20,7 +22,11 @@ const formSchema = z.object({
   }),
 });
 
-export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
+export const ImageForm = ({
+  initialData,
+  courseId,
+  onCourseUpdate,
+}: ImageFormProps) => {
   const [imageUrl, setImageUrl] = useState(initialData.imageUrl);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -34,14 +40,21 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
         userId,
       });
       setImageUrl(res.data.imageUrl);
+      onCourseUpdate(res.data);
       toast.success("Course updated");
       toggleEdit();
     } catch (error) {
       if (error instanceof Error) {
         const axiosError = error as any;
-        toast.error(axiosError.response.data.error);
+        if (axiosError.response) {
+          toast.error(axiosError.response.data.error);
+        } else if (axiosError.request) {
+          toast.error("No response from server");
+        } else {
+          toast.error("Error setting up request");
+        }
       } else {
-        toast.error("Something went wrong");
+        toast.error("An unexpected error occurred");
       }
     }
   };

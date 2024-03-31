@@ -10,6 +10,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import Provider from "@/redux/provider";
 import { Setup } from "@/components/utils";
+import { ConfettiProvider } from "@/components/common/Confetti";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Provider>
+          <ConfettiProvider />
           <Setup />
           <div className="h-[70px] fixed inset-y-0 w-full z-50">
             <Navbar />

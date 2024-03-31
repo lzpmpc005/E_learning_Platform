@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 
 import { ChaptersList } from "./chapters-list";
+import { CourseType } from "../page";
 
 interface Chapter {
   id: string;
@@ -40,13 +41,18 @@ interface ChaptersFormProps {
     chapters: Chapter[];
   };
   courseId: string;
+  onCourseUpdate: (course: CourseType) => void;
 }
 
 const formSchema = z.object({
   title: z.string().min(1),
 });
 
-export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
+export const ChaptersForm = ({
+  initialData,
+  courseId,
+  onCourseUpdate,
+}: ChaptersFormProps) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [chapters, setChapters] = useState(initialData.chapters);
@@ -73,20 +79,26 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
         ...values,
         userId,
       });
-      console.log(response.data);
       setChapters((prevChapters) => {
-        const newChapters = [...prevChapters, response.data];
+        const newChapters = [...prevChapters, response.data.chapter];
         return newChapters;
       });
+      onCourseUpdate(response.data.course);
       toast.success("Chapter created");
       toggleCreating();
       form.reset();
     } catch (error) {
       if (error instanceof Error) {
         const axiosError = error as any;
-        toast.error(axiosError.response.data.error);
+        if (axiosError.response) {
+          toast.error(axiosError.response.data.error);
+        } else if (axiosError.request) {
+          toast.error("No response from server");
+        } else {
+          toast.error("Error setting up request");
+        }
       } else {
-        toast.error("Something went wrong");
+        toast.error("An unexpected error occurred");
       }
     }
   };
