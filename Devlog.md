@@ -201,3 +201,25 @@
     - if purchased, show progress, otherwise, show price
 - build course inside components
   - something wrong with fetch course based on id, fix tomorrows
+
+### 01/04/2024
+
+- fix fetch course in course detail page
+
+- encounter internal error when delete a course, figure out the reason is I accidently delete it's video in my mux account manually, so when the content server handle the delete request, it can't find the asset and throw an error, optimize the error handling so that if no asset found, throw an error reminder and continue excuting
+
+  - find out maybe it's not me deleting the asset because I encounter the same thing after some time while I was try for updating chapter progress, perhaps it's the mux has some problem or there is some bug inside my codes, I don't know
+
+- build chapter details page (course review/preview)
+  - create sidebar for course page to display the chapters
+  - implement chapter details retrieve and render, including userProgress, title, description, attachment(if any), video
+  - implement continuous play and progress updating
+  - implement mark complete/uncomplete button
+  - when chapter complete, it will move to next chapter and update in the backend, but the frentend doesn't update until manual reload the page (need fix, the easiest way is to add a reload between chapter switch, but I want it to be smooth)... three hours later... using redux to fetch chapterId and triger get new courses data which include the progress, but it will stuck in the last chapter because chapter id doesn't change anymore, got find another way
+    - dispatch chapterId from videoplayer component which contain current chapterId, solve the last chapter issue, but manually mark complete/uncomplete doesn't work now, should also dispatch chapterId from course-progress-button also
+    - since course-progress-button won't change the chapterId, so I use createAt as the trigger, so that everytime I click, I got a different key
+    - also need to add this to chapterIdPage, otherwise, the button won't update
+    - satisfy about the effect now, but I believe there must be better way to achieve this
+- gonna implement a fake bank system to handle purchase courses
+
+### 02/04/2024

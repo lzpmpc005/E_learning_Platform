@@ -212,4 +212,58 @@ router.get("/api/courses/:courseId/published-chapters", async (req, res) => {
   }
 });
 
+// retrieve published chapter by ID
+router.get("/api/chapters/:chapterId/published", async (req, res) => {
+  try {
+    const prisma = req.prisma;
+    const { chapterId } = req.params;
+
+    const chapter = await prisma.chapter.findUnique({
+      where: {
+        id: chapterId,
+        isPublished: true,
+      },
+    });
+
+    if (!chapter) {
+      return res.status(404).json({ error: "Published chapter not found" });
+    }
+
+    res.json(chapter);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// retrieve next chapter by ID
+router.get("/api/courses/:courseId/nextChapter/:position", async (req, res) => {
+  try {
+    const prisma = req.prisma;
+    const { courseId, position } = req.params;
+
+    let nextChapter = await prisma.chapter.findFirst({
+      where: {
+        courseId: courseId,
+        isPublished: true,
+        position: {
+          gt: Number(position),
+        },
+      },
+      orderBy: {
+        position: "asc",
+      },
+    });
+
+    if (!nextChapter) {
+      nextChapter = null;
+    }
+
+    res.json(nextChapter);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

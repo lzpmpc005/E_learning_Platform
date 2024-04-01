@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 
 import { ChaptersList } from "./chapters-list";
-import { CourseType } from "../page";
+import { CourseType } from "@/utils/types";
 
 interface Chapter {
   id: string;

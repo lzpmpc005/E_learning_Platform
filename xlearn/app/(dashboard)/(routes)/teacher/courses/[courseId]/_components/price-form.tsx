@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { formatPrice } from "@/lib/format";
-import { CourseType } from "../page";
+import { CourseType } from "@/utils/types";
 
 interface PriceFormProps {
   initialData: {

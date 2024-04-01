@@ -1,12 +1,11 @@
-import { CourseType } from "@/app/(dashboard)/(routes)/teacher/courses/[courseId]/page";
-import { Chapter } from "@/app/(dashboard)/(routes)/teacher/courses/[courseId]/chapters/[chapterId]/page";
-import { UserProgress } from "./course-navbar";
+import { CourseType, Chapter, UserProgress } from "@/utils/types";
 import { useRouter } from "next/navigation";
 import { CourseProgress } from "@/components/common/course-progress";
 import { CourseSidebarItem } from "./course-sidebar-item";
 import axios from "@/utils/axios";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
+import { set } from "zod";
 
 interface CourseSidebarProps {
   course: CourseType & {
@@ -31,7 +30,7 @@ export const CourseSidebar = ({
 
     if (userIdFromStorage) {
       axios
-        .get(`/api/purchases/user/${userIdFromStorage}/course/${course.id}`)
+        .get(`/purchases/user/${userIdFromStorage}/course/${course.id}`)
         .then((response) => {
           setPurchase(response.data);
         })
@@ -46,7 +45,7 @@ export const CourseSidebar = ({
     }
   }, [course.id]);
 
-  if (!userId || !purchase) {
+  if (!userId) {
     return null;
   }
 

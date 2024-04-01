@@ -10,6 +10,7 @@ import { CourseNavbar } from "./_components/course-navbar";
 import axios from "@/utils/axios";
 import { toast } from "react-toastify";
 import { difference } from "next/dist/build/utils";
+import { useSelector } from "react-redux";
 
 const CourseLayout = ({
   children,
@@ -22,6 +23,7 @@ const CourseLayout = ({
   const [course, setCourse] = useState<any>(null);
   const [progressCount, setProgressCount] = useState<number>(0);
   const router = useRouter();
+  const trigger = useSelector((state: any) => state.chapter.currentChapterId);
 
   useEffect(() => {
     const userIdFromStorage = localStorage.getItem("userId");
@@ -29,7 +31,7 @@ const CourseLayout = ({
 
     if (userIdFromStorage) {
       axios
-        .get(`/api/courses/${params.courseId}/user/${userIdFromStorage}`)
+        .get(`/courses/${params.courseId}/user/${userIdFromStorage}`)
         .then(async (response) => {
           const courseData = response.data;
           if (!courseData) {
@@ -54,7 +56,7 @@ const CourseLayout = ({
       router.push("/");
       return;
     }
-  }, [params.courseId]);
+  }, [trigger]);
 
   if (!course) {
     return null;

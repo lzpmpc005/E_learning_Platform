@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { CourseType } from "../page";
+import { CourseType } from "@/utils/types";
 
 import {
   Form,

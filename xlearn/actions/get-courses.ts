@@ -1,7 +1,4 @@
-import {
-  CategoryType,
-  CourseType,
-} from "@/app/(dashboard)/(routes)/teacher/courses/[courseId]/page";
+import { CategoryType, CourseType } from "@/utils/types";
 
 import { getProgress } from "./get-progress";
 import axios from "@/utils/axios";

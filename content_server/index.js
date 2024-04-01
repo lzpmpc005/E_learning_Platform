@@ -26,13 +26,16 @@ app.use((req, res, next) => {
   next();
 });
 
-const courseRoutes = require("./courseRoutes");
-const courseActions = require("./courseActions");
-const chapterRoutes = require("./chapterRoutes");
-const chapterActions = require("./chapterActions");
-const attachmentRoutes = require("./attachmentRoutes");
-const categoryRoutes = require("./categoryRoutes");
-const userRoutes = require("./userRoutes");
+const courseRoutes = require("./routes/courseRoutes");
+const courseActions = require("./routes/courseActions");
+const chapterRoutes = require("./routes/chapterRoutes");
+const chapterActions = require("./routes/chapterActions");
+const attachmentRoutes = require("./routes/attachmentRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
+const userRoutes = require("./routes/userRoutes");
+const purchaseRoutes = require("./routes/purchaseRoutes");
+const muxDataRoutes = require("./routes/muxDataRoutes");
+const progressRoutes = require("./routes/progressRoutes");
 
 app.use(
   courseRoutes,
@@ -41,7 +44,10 @@ app.use(
   chapterActions,
   attachmentRoutes,
   categoryRoutes,
-  userRoutes
+  userRoutes,
+  purchaseRoutes,
+  muxDataRoutes,
+  progressRoutes
 );
 
 //start server

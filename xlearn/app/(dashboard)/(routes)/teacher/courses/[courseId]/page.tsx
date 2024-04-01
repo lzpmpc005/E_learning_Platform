@@ -21,27 +21,7 @@ import { ChaptersForm } from "./_components/chapters-form";
 import { Actions } from "./_components/actions";
 import { useEffect, useState } from "react";
 import axios from "@/utils/axios";
-
-export type CourseType = {
-  id: string;
-  userId: string;
-  title: string;
-  description: string | null;
-  imageUrl: string | null;
-  price: number | null;
-  isPublished: boolean;
-  categoryId: string | null;
-  createdAt: string;
-  updatedAt: string;
-  chapters: any[];
-  attachments: any[];
-  purchases: any[];
-};
-
-export type CategoryType = {
-  id: string;
-  name: string;
-};
+import { CourseType, CategoryType } from "@/utils/types";
 
 const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
   const [course, setCourse] = useState<CourseType | null>(null);

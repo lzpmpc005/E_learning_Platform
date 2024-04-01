@@ -1,17 +1,7 @@
-import { CourseType } from "@/app/(dashboard)/(routes)/teacher/courses/[courseId]/page";
-import { Chapter } from "@/app/(dashboard)/(routes)/teacher/courses/[courseId]/chapters/[chapterId]/page";
+import { CourseType, Chapter, UserProgress } from "@/utils/types";
 import { NavbarRoutes } from "@/components/common/navbar-routes";
 
 import { CourseMobileSidebar } from "./course-mobile-sidebar";
-
-export interface UserProgress {
-  id: string;
-  userId: string;
-  chapterId: string;
-  isCompleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 interface CourseNavbarProps {
   course: CourseType & {

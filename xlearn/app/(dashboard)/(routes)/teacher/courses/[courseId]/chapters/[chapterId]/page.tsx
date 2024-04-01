@@ -1,6 +1,5 @@
 "use client";
 
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Eye, LayoutDashboard, Video } from "lucide-react";
 
@@ -15,19 +14,7 @@ import { ChapterDescriptionForm } from "./_components/chapter-description-form";
 import { ChapterAccessForm } from "./_components/chapter-access-form";
 import { ChapterVideoForm } from "./_components/chapter-video-form";
 import { ChapterActions } from "./_components/chapter-actions";
-
-export interface Chapter {
-  id: string;
-  title: string;
-  description?: string;
-  videoUrl?: string | null;
-  position: number;
-  isPublished: boolean;
-  isFree: boolean;
-  courseId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { Chapter } from "@/utils/types";
 
 const ChapterIdPage = ({
   params,
@@ -49,10 +36,10 @@ const ChapterIdPage = ({
         })
         .catch((err) => {
           console.error(err);
-          redirect("/");
+          window.location.href = "/";
         });
     } else {
-      redirect("/");
+      window.location.href = "/";
     }
   }, []);
 

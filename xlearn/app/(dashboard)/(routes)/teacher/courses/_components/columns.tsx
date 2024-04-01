@@ -1,6 +1,6 @@
 "use client";
 
-import { CourseType } from "../[courseId]/page";
+import { CourseType } from "@/utils/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal, Pencil } from "lucide-react";
 import Link from "next/link";

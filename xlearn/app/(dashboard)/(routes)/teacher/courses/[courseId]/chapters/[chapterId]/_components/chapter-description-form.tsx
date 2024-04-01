@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Chapter } from "../page";
+import { Chapter } from "@/utils/types";
 
 interface ChapterDescriptionFormProps {
   initialData: Chapter;

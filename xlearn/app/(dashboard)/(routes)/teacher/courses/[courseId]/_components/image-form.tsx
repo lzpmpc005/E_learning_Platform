@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { FileUpload } from "@/components/common/file-upload";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { CourseType } from "../page";
+import { CourseType } from "@/utils/types";
 
 interface ImageFormProps {
   initialData: {

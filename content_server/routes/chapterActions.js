@@ -128,7 +128,7 @@ router.patch(
   }
 );
 
-// update
+// delete
 router.delete(
   "/api/courses/:courseId/chapters/:chapterId",
   async (req, res) => {
@@ -172,7 +172,17 @@ router.delete(
         });
 
         if (existingMuxData) {
-          await mux.video.assets.delete(existingMuxData.assetId);
+          try {
+            await mux.video.assets.delete(existingMuxData.assetId);
+          } catch (error) {
+            if (error.status === 404) {
+              console.log(
+                `Asset with ID ${existingMuxData.assetId} not found.`
+              );
+            } else {
+              throw error;
+            }
+          }
           await prisma.muxData.delete({
             where: {
               id: existingMuxData.id,

@@ -1,6 +1,6 @@
 "use client";
 
-import { CategoryType } from "../../teacher/courses/[courseId]/page";
+import { CategoryType } from "@/utils/types";
 
 import {
   FcStatistics,

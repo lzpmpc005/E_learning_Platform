@@ -7,26 +7,7 @@ import { toast } from "react-toastify";
 import { FileUpload } from "@/components/common/file-upload";
 
 import { Button } from "@/components/ui/button";
-
-interface MuxData {
-  id: string;
-  assetId: string;
-  playbackId?: string | null;
-  chapterId: string;
-}
-
-interface Chapter {
-  id: string;
-  title: string;
-  description?: string;
-  videoUrl?: string | null;
-  position: number;
-  isPublished: boolean;
-  isFree: boolean;
-  courseId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { MuxData, Chapter } from "@/utils/types";
 
 interface ChapterVideoFormProps {
   initialData: Chapter & { muxData?: MuxData | null };

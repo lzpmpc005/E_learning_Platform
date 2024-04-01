@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { ConfirmModal } from "@/components/modals/confirm-modal";
-import { CourseType } from "../page";
+import { CourseType } from "@/utils/types";
 import { useConfettiStore } from "@/hooks/use-confetti-store";
 
 interface ActionsProps {
@@ -39,7 +39,7 @@ export const Actions = ({
           userId,
         });
         setIsPublishedState(res.data.isPublished);
-        console.log("publish", res.data);
+
         onCourseUpdate(res.data);
         toast.success("Course unpublished");
       } else {
@@ -47,7 +47,7 @@ export const Actions = ({
           userId,
         });
         setIsPublishedState(res.data.isPublished);
-        console.log(res.data);
+
         onCourseUpdate(res.data);
         toast.success("Course published");
         confetti.onOpen();

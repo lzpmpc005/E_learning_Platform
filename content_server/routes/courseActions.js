@@ -140,14 +140,21 @@ router.delete("/api/courses/:courseId", async (req, res) => {
         },
       },
     });
-
     if (!course) {
       return res.status(404).send("Not Found");
     }
 
     for (const chapter of course.chapters) {
       if (chapter.muxData?.assetId) {
-        await mux.video.assets.delete(chapter.muxData.assetId);
+        try {
+          await mux.video.assets.delete(chapter.muxData.assetId);
+        } catch (error) {
+          if (error.status === 404) {
+            console.log(`Asset with ID ${chapter.muxData.assetId} not found.`);
+          } else {
+            throw error;
+          }
+        }
         await prisma.muxData.delete({
           where: {
             id: chapter.muxData.id,
@@ -161,6 +168,7 @@ router.delete("/api/courses/:courseId", async (req, res) => {
         id: courseId,
       },
     });
+    console.log("Deleted course", deletedCourse);
 
     res.json(deletedCourse);
   } catch (error) {

@@ -18,7 +18,6 @@ async function main() {
         "http://localhost:4000/api/create-categories",
         category
       );
-      console.log(response.data);
     });
   } catch (error) {
     console.log("Error creating the categories", error);

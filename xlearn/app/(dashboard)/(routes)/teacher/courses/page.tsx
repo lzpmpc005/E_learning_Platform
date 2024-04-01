@@ -1,6 +1,5 @@
 "use client";
 
-import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { DataTable } from "./_components/data-table";
@@ -14,8 +13,10 @@ const CoursesPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       const userId = localStorage.getItem("userId");
+
       if (!userId) {
-        return redirect("/");
+        window.location.href = "/";
+        return;
       }
 
       const response = await axios.get(`/courses?userId=${userId}`);

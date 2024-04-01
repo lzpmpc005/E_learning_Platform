@@ -1,32 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-// check purchase status
-router.get("/api/purchases/user/:userId/course/:courseId", async (req, res) => {
-  try {
-    const prisma = req.prisma;
-    const { userId, courseId } = req.params;
-
-    const purchase = await prisma.purchase.findUnique({
-      where: {
-        userId_courseId: {
-          userId,
-          courseId,
-        },
-      },
-    });
-
-    if (!purchase) {
-      return res.status(404).json({ error: "Purchase not found" });
-    }
-
-    res.json(purchase);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 //retrieve user specific course
 router.get("/api/courses/:courseId/user/:userId", async (req, res) => {
   try {

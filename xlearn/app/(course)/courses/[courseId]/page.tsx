@@ -7,14 +7,15 @@ import { useEffect, useState } from "react";
 
 const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
   const [userId, setUserId] = useState<string | null>(null);
+  const router = useRouter();
   useEffect(() => {
     const userIdFromStorage = localStorage.getItem("userId");
-    const router = useRouter();
+
     setUserId(userIdFromStorage);
 
     if (userIdFromStorage) {
       axios
-        .get(`/api/courses/${params.courseId}/user/${userIdFromStorage}`)
+        .get(`/courses/${params.courseId}/user/${userIdFromStorage}`)
         .then((response) => {
           const course = response.data;
           if (!course) {
@@ -33,7 +34,7 @@ const CourseIdPage = ({ params }: { params: { courseId: string } }) => {
           toast.error("An error occurred while fetching the course");
         });
     }
-  }, [params.courseId]);
+  }, [params.courseId, router]);
 
   return null;
 };

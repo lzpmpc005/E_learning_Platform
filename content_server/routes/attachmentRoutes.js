@@ -76,4 +76,28 @@ router.post("/api/courses/:courseId/attachments", async (req, res) => {
     res.status(500).send("Internal Error");
   }
 });
+
+// get attachments for a course by courseId
+router.get("/api/courses/:courseId/attachments", async (req, res) => {
+  try {
+    const prisma = req.prisma;
+    const { courseId } = req.params;
+
+    let attachments = await prisma.attachment.findMany({
+      where: {
+        courseId: courseId,
+      },
+    });
+
+    if (!attachments || attachments.length === 0) {
+      attachments = [];
+    }
+
+    res.json(attachments);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

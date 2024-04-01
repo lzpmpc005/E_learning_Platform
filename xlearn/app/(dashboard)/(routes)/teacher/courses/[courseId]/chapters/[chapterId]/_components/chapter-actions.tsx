@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { ConfirmModal } from "@/components/modals/confirm-modal";
-import { Chapter } from "../page";
+import { Chapter } from "@/utils/types";
 import { on } from "events";
 
 interface ChapterActionsProps {

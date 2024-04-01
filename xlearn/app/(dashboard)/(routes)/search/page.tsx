@@ -1,6 +1,5 @@
 "use client";
 
-import { redirect } from "next/navigation";
 import axios from "@/utils/axios";
 import { useEffect, useState } from "react";
 
@@ -25,7 +24,9 @@ const SearchPage = ({ searchParams }: SearchPageProps) => {
     const fetchData = async () => {
       const userId = localStorage.getItem("userId");
       if (!userId) {
-        return redirect("/");
+        console.log("Search Page No user id");
+        window.location.href = "/";
+        return;
       }
 
       const categoriesData = await axios.get("/categories");
