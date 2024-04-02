@@ -11,10 +11,13 @@
 - Frontend
   - next.js
 - Backend
-  - User Manage Server: Django
+
+  - Auth Server: Django
     - Authentication Method: jwt
-  - Content Manage Server: Express
-  - Analysis Server: undecided
+  - Content Server: Express.js
+  - Analysis Server: Django
+  - Bank Server: Express.js
+
 - Database
   - Postgresql
 
@@ -223,3 +226,30 @@
 - gonna implement a fake bank system to handle purchase courses
 
 ### 02/04/2024
+
+- implement payment system with stripe api
+  - get api key from stripe and add to .env.local
+  - install stripe
+    `npm i stripe`
+- changed idea, I want to implement my own bank system instead
+- update initialize scripts to create both categories and a bank account for test
+  `node ./scripts/initialize.ts`
+
+- forgot "//" after "http:" will cause axios reconstructure the url by adding base url to it
+- since my content server and bank server both connect to the same database using prisma client, both of them should have the same schema.prisma file but only one should migrate, otherwise, the database will be reset
+- findUnique method of prisma client require at least one unique field parameter, findFirst doesn't
+- encounter payment modal doesn't render on page, went back to normal after refresh serveral times, no idea
+- finally payment successful, but the page doesn't refresh imediately
+- payment doesn't render again, got find out why
+  - it's weird, when I open the dev tool and click the page, it will show
+  - it works perfect when I open the dev tool, but sometimes doesn't work when dev tool was closed
+    - it has something to do with the screen size, probably the modal size, fix later
+- update triger for retrieve purchase after successful payment
+- build student dashboard
+
+  - implement get purchased courses endpoint and component
+  - create inprogress courses and completed course display
+  - create info-card for each course, similar to the search page
+    - click the info-card will direct to the course content page
+
+- gonna build analysis server tomorrow

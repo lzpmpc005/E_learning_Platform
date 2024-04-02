@@ -6,6 +6,7 @@ import axios from "@/utils/axios";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { set } from "zod";
+import { useSelector } from "react-redux";
 
 interface CourseSidebarProps {
   course: CourseType & {
@@ -23,6 +24,7 @@ export const CourseSidebar = ({
   const [userId, setUserId] = useState<string | null>(null);
   const [purchase, setPurchase] = useState<any>(null);
   const router = useRouter();
+  const trigger = useSelector((state: any) => state.chapter.currentChapterId);
 
   useEffect(() => {
     const userIdFromStorage = localStorage.getItem("userId");
@@ -43,7 +45,7 @@ export const CourseSidebar = ({
       router.push("/");
       return;
     }
-  }, [course.id]);
+  }, [course.id, trigger]);
 
   if (!userId) {
     return null;

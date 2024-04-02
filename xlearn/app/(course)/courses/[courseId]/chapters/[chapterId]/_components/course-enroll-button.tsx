@@ -1,11 +1,15 @@
 "use client";
 
-import axios from "@/utils/axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/format";
+import Payment from "@/app/payment/Payment";
+import { Modal } from "react-bootstrap";
+import { redirect } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setCurrentChapter } from "@/redux/services/chapterSlice";
 
 interface CourseEnrollButtonProps {
   price: number;
@@ -16,30 +20,52 @@ export const CourseEnrollButton = ({
   price,
   courseId,
 }: CourseEnrollButtonProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const userId = localStorage.getItem("userId");
+  const dispatch = useDispatch();
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+
+  console.log("payopen", isPaymentOpen);
+  if (!userId) {
+    toast.error("Please login to enroll in the course");
+    return redirect("/auth/login");
+  }
 
   const onClick = async () => {
-    try {
-      setIsLoading(true);
+    setIsPaymentOpen(true);
+  };
 
-      const response = await axios.post(`/api/courses/${courseId}/checkout`);
-
-      window.location.assign(response.data.url);
-    } catch {
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
+  const handlePaymentStatus = (status: string | null) => {
+    setIsPaymentOpen(false);
+    if (status) {
+      dispatch(setCurrentChapter(status));
+      toast.success("Payment successful");
+    } else {
+      toast.error("Payment failed, check your account details and try again");
     }
   };
 
   return (
-    <Button
-      onClick={onClick}
-      disabled={isLoading}
-      size="sm"
-      className="w-full md:w-auto"
-    >
-      Enroll for {formatPrice(price)}
-    </Button>
+    <>
+      <Button
+        onClick={onClick}
+        disabled={isPaymentOpen}
+        size="sm"
+        className="w-full md:w-auto"
+      >
+        Enroll for {formatPrice(price)}
+      </Button>
+      <Modal show={isPaymentOpen} onHide={() => setIsPaymentOpen(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Payment</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Payment
+            userId={userId}
+            courseId={courseId}
+            handlePaymentStatus={handlePaymentStatus}
+          />
+        </Modal.Body>
+      </Modal>
+    </>
   );
 };

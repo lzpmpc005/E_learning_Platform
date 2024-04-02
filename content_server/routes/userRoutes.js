@@ -101,4 +101,41 @@ router.get("/api/courses", async (req, res) => {
   }
 });
 
+// retrieve all purchased courses for a user
+router.get("/api/users/:userId/purchased-courses", async (req, res) => {
+  try {
+    const prisma = req.prisma;
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).send("Unauthorized");
+    }
+
+    const purchasedCourses = await prisma.purchase.findMany({
+      where: {
+        userId: userId,
+      },
+      select: {
+        course: {
+          include: {
+            category: true,
+            chapters: {
+              where: {
+                isPublished: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return res.json(purchasedCourses);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ error: "Error in retrieving purchasedCourses" });
+  }
+});
+
 module.exports = router;
