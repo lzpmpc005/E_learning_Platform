@@ -253,3 +253,28 @@
     - click the info-card will direct to the course content page
 
 - gonna build analysis server tomorrow
+
+### 03/04/2024
+
+- implement analysis server with Django, but since it will need to interact with the same database content server is using, it could be easier to implement this also using Express.js, but challenge accepted
+  - in order to make Django interact with the same database, I have to define necessary models in Django exactly the same structure and properties like in Express schema
+    - after connect to the database, I can generate models from database of content server
+      `python manage.py inspectdb > models.py`
+      - but this generation is only for refrence because the relationships and properties details might not be correct
+      - especially mind that the column name must be exactly the same
+    - then makemigrations for Django
+      `python manage.py makemigrations`
+    - final step, fake migrate, it's important because real migrate will reset the database or change the existing database which will cause conflict and data loss
+      `python manage.py migrate --fake`
+  - create a test API to retrieve the all the purchases, the above exprerience actually comes from this
+    - finally success, challenge overcome
+- customize port of analysis server to be 1234, temperately
+  `python manage.py runserver 1234`
+- create api to return purchase and related course by userId
+- create get-analytics function to get the purchase and course data and then return
+- create data card for total sales
+- create chart using recharts
+  `npm i recharts`
+  - just a bar chart to show the sale of each course for now
+- complete the first analysis chart, gonna implement more in the future
+- research on how to add a gateway server between frontend and backend
