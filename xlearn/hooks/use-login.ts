@@ -32,8 +32,14 @@ export default function useLogin() {
         toast.success("Welcome to collegeX!");
         router.push("/");
       })
-      .catch(() => {
-        toast.error("Invalid email or password");
+      .catch((error) => {
+        let errorMessage = "";
+        if (error.data) {
+          for (const [key, value] of Object.entries(error.data)) {
+            errorMessage += `${key}: ${(value as string[]).join(" ")} `;
+          }
+        }
+        toast.error(errorMessage || "Invalid credentials!");
       });
   };
 

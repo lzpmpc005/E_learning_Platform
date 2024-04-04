@@ -34,8 +34,6 @@ export const getDashboardCourses = async (
 
     const res = await axios.get(`/users/${userId}/purchased-courses`);
     const purchasedCourses = res.data;
-    console.log("purchasedCourses", purchasedCourses);
-
     const courses = purchasedCourses.map(
       (purchase: PurchaseType) => purchase.course
     ) as CourseWithProgressWithCategory[];
@@ -45,7 +43,6 @@ export const getDashboardCourses = async (
       course["progress"] = progress;
     }
 
-    console.log("courses", courses);
     const completedCourses = courses.filter(
       (course) => course.progress === 100
     );

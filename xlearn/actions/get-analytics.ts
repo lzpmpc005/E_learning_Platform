@@ -22,7 +22,7 @@ const groupByCourse = (purchases: PurchaseWithCourse[]) => {
 export const getAnalytics = async (userId: string) => {
   try {
     const response = await axios.get(
-      `http://localhost:1234/api/purchases/user/${userId}/`
+      `http://localhost:8080/analysis/purchases/user/${userId}/`
     );
 
     const purchases: PurchaseWithCourse[] = response.data;

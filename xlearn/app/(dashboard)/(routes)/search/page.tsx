@@ -7,7 +7,7 @@ import { SearchInput } from "@/components/common/search-input";
 import { getCourses } from "@/actions/get-courses";
 import { CoursesList } from "@/components/common/courses-list";
 import { Categories } from "./_components/categories";
-import { get } from "http";
+
 import { CourseWithProgressWithCategory } from "@/actions/get-courses";
 
 interface SearchPageProps {

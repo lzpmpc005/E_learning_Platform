@@ -9,7 +9,13 @@
 #### structure
 
 - Frontend
+
   - next.js
+
+- Gateway
+
+  - Spring Cloud
+
 - Backend
 
   - Auth Server: Django
@@ -19,6 +25,7 @@
   - Bank Server: Express.js
 
 - Database
+
   - Postgresql
 
 ## Development Log
@@ -278,3 +285,41 @@
   - just a bar chart to show the sale of each course for now
 - complete the first analysis chart, gonna implement more in the future
 - research on how to add a gateway server between frontend and backend
+
+### 04/04/2024
+
+- try implementing gateway server with Spring Cloud on Java21
+
+  - install openJDK
+  - install Maven
+  - configure routes for auth system
+  - run application
+  - test request, failed, 404, not found, perhaps the auth server is blocking it
+  - tried many ways, can't solve it
+  - went back to official doc, successfully route one endpoint
+    - find a way to configure the base url of a server, seems work well
+  - configure all servers inside the gateway server
+    - auth server port 8000
+    - content server port 4000
+    - bank server port 8888
+    - analysis server port 1234
+  - frontend now make all the requests to gateway server now which is running at port 8080
+
+- test the whole system
+
+  - find out that the previous video not found error is because I am using a free account of mux which will delete all assets after 24 hours
+
+  - need to handle cors settings also
+
+    - auth_server works, but content_server still have the cors problem
+
+      - get request doesn't have the problem
+      - post/put request to all servers have cors problem, the reason should lie in the gateway server
+      - cors problem is really annoying, sometimes the same setting will cause different error, and I don't know what is going on
+      - finally set up for auth systems and find that some opearations still has cors error
+        - it's the method that I forgot to add to allowed list
+      - after hours of research, find out the reason is that spring cloud gateway(or client?) will add an conditional header for a duplicate request and if nothing changes, the server will response 304 and causing the multiple headers error also, solve this now by adding an filter to remove conditional header, but I am thinking why there are always two requests which is identical sent the same time, is it necessary or redundant?
+
+      - I have also removed cors handling from backend servers, all cors will be handled by gateway server, at least I think so.
+
+- next step: can I dockerize all of these servers?

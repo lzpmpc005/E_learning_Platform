@@ -46,7 +46,7 @@ const Payment = ({ userId, courseId, handlePaymentStatus }: PaymentProps) => {
     setTimeout(async () => {
       try {
         const response = await axios.post(
-          `http://localhost:8888/api/courses/${courseId}/checkout`,
+          `http://localhost:8080/bankx/courses/${courseId}/`,
           {
             ...formData,
             userId,

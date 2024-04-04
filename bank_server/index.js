@@ -5,20 +5,20 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const app = express();
 
-app.use(cors());
+// app.use(cors());
 
 app.use(express.json());
 
 //cors
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  // res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  // res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  // res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   req.prisma = prisma;
   next();
 });
 
-app.post("/api/courses/:courseId/checkout", async (req, res) => {
+app.post("/bankx/courses/:courseId/", async (req, res) => {
   const params = req.body;
   const { courseId } = req.params;
   console.log(params);
@@ -77,7 +77,7 @@ app.post("/api/courses/:courseId/checkout", async (req, res) => {
   res.status(200).json(newPurchase);
 });
 
-app.post("/api/create-bank-account", async (req, res) => {
+app.post("/bankx/create-account", async (req, res) => {
   try {
     const {
       card_number,

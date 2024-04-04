@@ -18,8 +18,14 @@ export default function useResetPassword() {
       .then(() => {
         toast.success("Please check email for reset link!");
       })
-      .catch(() => {
-        toast.error("Failed to reset password!");
+      .catch((error) => {
+        let errorMessage = "";
+        if (error.data) {
+          for (const [key, value] of Object.entries(error.data)) {
+            errorMessage += `${key}: ${(value as string[]).join(" ")} `;
+          }
+        }
+        toast.error(errorMessage || "Failed to reset password!");
       });
   };
 

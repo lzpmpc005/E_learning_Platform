@@ -118,11 +118,6 @@ router.get("/api/all-courses", async (req, res) => {
             id: true,
           },
         },
-        purchases: {
-          where: {
-            userId,
-          },
-        },
       },
       orderBy: {
         createdAt: "desc",

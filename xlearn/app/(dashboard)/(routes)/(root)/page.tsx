@@ -32,7 +32,7 @@ export default function Dashboard() {
     const userId = localStorage.getItem("userId");
 
     if (!userId) {
-      redirect("/search");
+      redirect("/auth/login");
     } else {
       getDashboardCourses(userId).then(
         ({

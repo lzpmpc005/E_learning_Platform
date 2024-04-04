@@ -20,7 +20,11 @@ router.patch("/api/courses/:courseId/chapters/:chapterId", async (req, res) => {
         where: { chapterId: chapterId },
       });
       if (existMuxData) {
-        await mux.video.assets.delete(existMuxData.assetId);
+        try {
+          await mux.video.assets.delete(existMuxData.assetId);
+        } catch (error) {
+          console.error(`Failed to delete video asset: ${error.message}`);
+        }
         await prisma.muxData.delete({
           where: { id: existMuxData.id },
         });

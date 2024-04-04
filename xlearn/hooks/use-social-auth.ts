@@ -28,8 +28,14 @@ export default function useSocialAuth(authenticate: any, provider: string) {
           toast.success("Logged in successfully");
           router.push("/");
         })
-        .catch(() => {
-          toast.error("Failed to login");
+        .catch((error: { data?: { [key: string]: string[] } }) => {
+          let errorMessage = "";
+          if (error.data) {
+            for (const [key, value] of Object.entries(error.data)) {
+              errorMessage += `${key}: ${value.join(" ")} `;
+            }
+          }
+          toast.error(errorMessage || "Failed to login!");
           router.push("/auth/login");
           return;
         });
