@@ -32,7 +32,7 @@ SECRET_KEY = getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'gateway', 'authsystem', 'analysisserver', 'db', 'bankserver', 'contentserver', 'xlearnfrontend']
 
 
 # Application definition
@@ -55,7 +55,7 @@ MIDDLEWARE = [
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -64,7 +64,7 @@ MIDDLEWARE = [
     'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
-# CORS_ALLOWED_ORIGINS = ["http://localhost:8080", "http://127.0.0.1:8080"]
+CORS_ALLOWED_ORIGINS = ["http://localhost:8080", "http://127.0.0.1:8080", "http://gateway:8080"]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -96,10 +96,10 @@ WSGI_APPLICATION = 'auth_system.wsgi.application'
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "LearnX",
-        "USER": getenv('DB_USER'),
-        "PASSWORD": getenv('DB_PASSWORD'),
-        "HOST": "localhost",
+        "NAME": "postgres",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "db",
         "PORT": "5432",
     }
 }

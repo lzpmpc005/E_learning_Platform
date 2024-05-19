@@ -4,7 +4,11 @@ spring:
       globalcors:
         cors-configurations:
           "[/**]":
-            allowedOrigins: "http://localhost:3000"
+            allowedOrigins:
+              - "http://xlearnfrontend:3000"
+              - "http://localhost:3000"
+              - "http://gateway:8080"
+              - "http://localhost:8080"
             allowedMethods:
               - GET
               - POST

@@ -20,7 +20,7 @@ export default function NavLink({
 }: Props) {
   const className = cn(
     rest.className,
-    "text-white rounded-md px-3 py-2 font-medium",
+    "text-black rounded-md px-3 py-2 font-medium",
     {
       "bg-blue-500 text-white": isSelected,
       "text-black ": !isSelected,

@@ -15,7 +15,7 @@ async function createCategories() {
   try {
     categories.forEach(async (category) => {
       const response = await axios.post(
-        "http://localhost:8080/api/create-categories",
+        "http://gateway:8080/api/create-categories",
         category
       );
     });
@@ -36,7 +36,7 @@ const account = {
 
 async function createBankAccount() {
   try {
-    await axios.post("http://localhost:8080/bankx/create-account", account);
+    await axios.post("http://gateway:8080/bankx/create-account", account);
     console.log(`Created bank account ${account.card_number}`);
   } catch (error) {
     console.log("Error creating the bank account", error);

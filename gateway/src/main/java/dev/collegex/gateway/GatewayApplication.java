@@ -26,25 +26,25 @@ public class GatewayApplication {
             .path("/auth/**")
 			.filters(f -> f.rewritePath("/(?<segment>.*)", "/${segment}")
 				.filter(this.removeConditionalHeaders()))
-            .uri("http://localhost:8000"))
+            .uri("http://authsystem:8000"))
 		// content server
 		.route(p -> p
             .path("/api/**")
 			.filters(f -> f.rewritePath("/(?<segment>.*)", "/${segment}")
 				.filter(this.removeConditionalHeaders()))
-            .uri("http://localhost:4000"))
+            .uri("http://contentserver:4000"))
 		// bank server
 		.route(p -> p
             .path("/bankx/**")
 			.filters(f -> f.rewritePath("/(?<segment>.*)", "/${segment}")
 				.filter(this.removeConditionalHeaders()))
-            .uri("http://localhost:8888"))
+            .uri("http://bankserver:8888"))
 		// analysis server
 		.route(p -> p
             .path("/analysis/**")
 			.filters(f -> f.rewritePath("/(?<segment>.*)", "/${segment}")
 				.filter(this.removeConditionalHeaders()))
-            .uri("http://localhost:1234"))
+            .uri("http://analysisserver:1234"))
         .build();
 }
 

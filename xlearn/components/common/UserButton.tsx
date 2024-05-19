@@ -30,9 +30,7 @@ export default function UserButton() {
       .then(() => {
         dispatch(setLogout());
         localStorage.removeItem("userId");
-      })
-      .finally(() => {
-        router.push("/");
+        window.location.reload();
       });
   };
 
@@ -80,7 +78,7 @@ export default function UserButton() {
             !isAuthenticated ? () => router.push("/auth/login") : undefined
           }
         >
-          {isAuthenticated ? "Welcome" : "Login"}
+          {isAuthenticated ? "My Account" : "Login"}
         </DropdownMenuTrigger>
         {isAuthenticated && (
           <DropdownMenuContent align="end">

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-zc!!&xvvgau0so0^woi!xz^i$wl-_8yo9b_cqrvgxjzr$qt6%6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'gateway', 'authsystem', 'analysisserver', 'db', 'bankserver', 'contentserver', 'xlearnfrontend']
 
 
 # Application definition
@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS_ALLOWED_ORIGINS = ["http://localhost:8080", "http://127.0.0.1:8080"]
+CORS_ALLOWED_ORIGINS = ["http://localhost:8080", "http://127.0.0.1:8080", "http://gateway:8080"]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -84,9 +84,9 @@ DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "postgres",
-        "USER": "hongtaoli",
-        "PASSWORD": "hongtaoli",
-        "HOST": "localhost",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "db",
         "PORT": "5432",
     }
 }

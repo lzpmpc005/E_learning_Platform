@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
-import { UserButton, Profile } from "@/components/common";
+import { UserButton } from "@/components/common";
 import { SearchInput } from "./search-input";
 
 export const NavbarRoutes = () => {
@@ -35,7 +35,7 @@ export const NavbarRoutes = () => {
             </Button>
           </Link>
         )}
-        {/* <Profile /> */}
+
         <UserButton />
       </div>
     </>

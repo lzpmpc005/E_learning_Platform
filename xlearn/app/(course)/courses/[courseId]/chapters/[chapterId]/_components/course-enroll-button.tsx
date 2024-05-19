@@ -24,7 +24,6 @@ export const CourseEnrollButton = ({
   const dispatch = useDispatch();
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
-  console.log("payopen", isPaymentOpen);
   if (!userId) {
     toast.error("Please login to enroll in the course");
     return redirect("/auth/login");
@@ -55,9 +54,6 @@ export const CourseEnrollButton = ({
         Enroll for {formatPrice(price)}
       </Button>
       <Modal show={isPaymentOpen} onHide={() => setIsPaymentOpen(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Payment</Modal.Title>
-        </Modal.Header>
         <Modal.Body>
           <Payment
             userId={userId}

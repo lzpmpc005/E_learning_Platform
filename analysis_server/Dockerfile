@@ -1,8 +1,8 @@
 FROM python:3.12.1-slim-bullseye
 
-WORKDIR /auth_system
+WORKDIR /analysis_server
 
-COPY requirements.txt /auth_system/
+COPY requirements.txt /analysis_server/
 
 RUN apt-get update && apt-get install -y \
     pkg-config \
@@ -15,4 +15,4 @@ RUN pip install --upgrade pip
 
 RUN pip install -r requirements.txt
 
-COPY . /auth_system/
+COPY . /analysis_server/
