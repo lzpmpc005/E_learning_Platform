@@ -28,9 +28,9 @@ replay_pid*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
+content_server/prisma/migrations/
 *.py[cod]
 *$py.class
-migrations/
 # C extensions
 *.so
 

@@ -44,7 +44,7 @@ public class GatewayApplication {
             .path("/analysis/**")
 			.filters(f -> f.rewritePath("/(?<segment>.*)", "/${segment}")
 				.filter(this.removeConditionalHeaders()))
-            .uri("http://analysisserver:1234"))
+            .uri("http://analysisserver:2345"))
         .build();
 }
 

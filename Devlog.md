@@ -323,3 +323,5 @@
       - I have also removed cors handling from backend servers, all cors will be handled by gateway server, at least I think so.
 
 - next step: can I dockerize all of these servers?
+
+### 18/05/2024
