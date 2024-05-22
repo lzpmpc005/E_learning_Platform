@@ -325,3 +325,5 @@
 - next step: can I dockerize all of these servers?
 
 ### 18/05/2024
+
+Done!

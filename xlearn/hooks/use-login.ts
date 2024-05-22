@@ -33,13 +33,7 @@ export default function useLogin() {
         router.push("/");
       })
       .catch((error) => {
-        let errorMessage = "";
-        if (error.data) {
-          for (const [key, value] of Object.entries(error.data)) {
-            errorMessage += `${key}: ${(value as string[]).join(" ")} `;
-          }
-        }
-        toast.error(errorMessage || "Invalid credentials!");
+        toast.error("Invalid credentials!");
       });
   };
 
